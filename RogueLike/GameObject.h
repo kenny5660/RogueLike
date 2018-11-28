@@ -17,10 +17,12 @@ class GameObject {
   Point pos_;
 };
 class Wall : public GameObject {
+ public:
   Wall(Point pos);
 };
 
 class EmptyBlock: public GameObject {
+ public:
   EmptyBlock(Point pos);
 };
 

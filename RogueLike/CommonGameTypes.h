@@ -1,6 +1,7 @@
 #pragma once
 #include <limits>
 struct Point {
+  Point(double X, double Y);
   double X;
   double Y;
   int get_int_X() const { return (int)X; }

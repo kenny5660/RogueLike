@@ -1,21 +1,30 @@
 #pragma once
 #include "pch.h"
+const int max_scene_width = 500;
+const int max_scene_heght = 500;
 
 class Scene {
  public:
   Scene();
-  ~Scene();
+  void AddObject(GameObject& game_object);
+  void DelObject(ObjectId id);
   void Update();
   void Draw();
 
  protected:
-  GameDatabase gameObjects;
+  GameDatabase gameObjects_;
+  int width_;
+  int heght_;
 };
 
-class Dungeon_map : Scene {
+class DungeonMap : public Scene {
  public:
-  Dungeon_map(std::istream& textMap);
+  DungeonMap(std::istream& textMap);
 
  private:
   void parse_file(std::istream& textMap);
+  void create_Wall(Point pos);
+  void create_EmptyBlock(Point pos);
+
+
 };
