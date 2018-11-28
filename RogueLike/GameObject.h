@@ -11,11 +11,17 @@ class GameObject {
   ObjectId get_id() const;
   void set_id(ObjectId id);
 
-
  protected:
   ObjectId id_;
   char texture_char_;
   Point pos_;
+};
+class Wall : public GameObject {
+  Wall(Point pos);
+};
+
+class EmptyBlock: public GameObject {
+  EmptyBlock(Point pos);
 };
 
 class Entity : public GameObject {

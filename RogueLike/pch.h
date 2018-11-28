@@ -8,11 +8,9 @@
 
 #ifndef PCH_H
 #define PCH_H
+
 #include <vector>
 #include <curses.h>
-#include "CommonGameTypes.h"
-#include "GameObject.h"
-#include "game_database.h"
 #include <cstdlib>
 #include <functional>
 #include <map>
@@ -21,6 +19,9 @@
 #include <utility>
 #include <vector>
 #include <fstream>
+#include "CommonGameTypes.h"
+#include "GameObject.h"
+#include "game_database.h"
 // TODO: add headers that you want to pre-compile here
 
 #endif //PCH_H
