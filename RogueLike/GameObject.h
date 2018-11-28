@@ -3,6 +3,7 @@
 using ObjectId = unsigned long long int;
 class GameObject {
  public:
+  GameObject();
   virtual void Update() {}
   virtual void Draw() {}
 
