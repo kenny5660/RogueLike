@@ -5,18 +5,18 @@ class GameObject {
  public:
   GameObject();
   virtual void Update() = 0;
-  virtual void Draw() = 0;
+  virtual void Draw();
 
   Point get_pos() const;
   void set_pos(Point pos);
   ObjectId get_id() const;
-  void set_id(ObjectId id) const ;
+  void set_id(ObjectId id);
 
   char get_texture() const;
   void set_texture(char texture);
 
  protected:
-  mutable ObjectId id_;
+  ObjectId id_;
   char texture_char_;
   Point pos_;
 };
@@ -24,7 +24,6 @@ class Wall : public GameObject {
  public:
   Wall(Point pos);
   void Update() override;
-  void Draw() override;
 };
 
 class EmptyBlock : public GameObject {
@@ -47,15 +46,13 @@ class Entity : public GameObject {
 };
 class Zombie : public Entity {
  public:
-  Zombie(Point pos);
+  Zombie(Point pos, char texture = 'Z');
   void Update() override;
-  void Draw() override;
 };
 class Knight : public Entity {
  public:
   Knight(Point pos, char texture = 'K');
   void Update() override;
-  void Draw() override;
   void key_pressed(int key);
   
  private:
@@ -63,5 +60,4 @@ class Knight : public Entity {
   void pressed_Down();
   void pressed_Right();
   void pressed_Left();
-
 };

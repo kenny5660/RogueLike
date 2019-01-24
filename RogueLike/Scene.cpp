@@ -1,7 +1,4 @@
 #include "pch.h"
-#include <algorithm>
-#include "Scene.h"
-
 Scene::Scene() {}
 void Scene::AddObject(std::shared_ptr<GameObject> game_object) {
   gameObjects_.Insert(game_object);
@@ -22,12 +19,10 @@ void Scene::Draw() {
 }
 
 void create_Wall(DungeonMap& map, const Point& pos) {
-  Wall wall(pos);
-  map.AddObject(static_cast<std::shared_ptr<GameObject>>(new Wall(pos)));
+  map.AddObject(std::shared_ptr<GameObject>(new Wall(pos)));
 }
-void create_EmptyBlock(DungeonMap& map, const Point& pos) {
-  /*GameObject empty = EmptyBlock(pos);
-  map.AddObject(empty);*/
+void create_Zombie(DungeonMap& map, const Point& pos) {
+  map.AddObject(std::shared_ptr<GameObject>(new Zombie(pos)));
 }
 
 void set_spawn_knight(DungeonMap& map, const Point& pos) {
@@ -35,12 +30,10 @@ void set_spawn_knight(DungeonMap& map, const Point& pos) {
 }
 
 const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
-    {'#', &create_Wall},
-    {' ', &create_EmptyBlock},
-    {'K', &set_spawn_knight},
-    {'\0', &create_EmptyBlock}};
+    {'#', &create_Wall}, {'Z', &create_Zombie}, {'K', &set_spawn_knight}};
 
-DungeonMap::DungeonMap(std::istream& textMap, Knight& kn) : kn_(&kn) {
+DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn)
+    : kn_(kn) {
   parse_file(textMap);
 }
 void DungeonMap::spawn_knight() {
@@ -57,12 +50,13 @@ void DungeonMap::parse_file(std::istream& textMap) {
   while (textMap.getline(line, max_scene_width)) {
     for (int i = 0; i < max_scene_width && line[i] != '\0'; ++i) {
       auto it = creators_map.find(line[i]);
-      it->second(*this, Point(i, curY));
+      if (it != creators_map.end()) {
+        it->second(*this, Point(i, curY));
+      }
       width_ = std::max(width_, i);
     }
-    
+
     heght_ = std::max(heght_, curY);
     curY++;
   }
-
 }

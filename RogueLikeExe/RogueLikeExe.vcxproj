@@ -179,6 +179,9 @@
       <Project>{e3afb2ae-c867-47e9-8f09-a9ef8e4ce1c3}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="maps\1lvl.map" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

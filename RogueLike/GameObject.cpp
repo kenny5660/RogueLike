@@ -8,21 +8,19 @@ void GameObject::set_pos(Point pos) { pos_ = pos; }
 
 ObjectId GameObject::get_id() const { return id_; }
 
-void GameObject::set_id(ObjectId id) const { id_ = id; }
+void GameObject::set_id(ObjectId id) { id_ = id; }
 
 char GameObject::get_texture() const { return texture_char_; }
 void GameObject::set_texture(char texture) { texture_char_ = texture; }
-
+void GameObject::Draw() {
+  mvaddch(pos_.get_int_Y(), pos_.get_int_X(), texture_char_);
+}
 Wall::Wall(Point pos) {
   pos_ = pos;
   texture_char_ = '#';
 }
 
 void Wall::Update() {}
-
-void Wall::Draw() {
-  mvaddch(pos_.get_int_Y(), pos_.get_int_X(), texture_char_);
-}
 
 EmptyBlock::EmptyBlock(Point pos) {
   pos_ = pos;
@@ -49,22 +47,24 @@ Knight::Knight(Point pos, char texture) {
 
 void Knight::Update() {}
 
-void Knight::Draw() {
-  mvaddch(pos_.get_int_Y(), pos_.get_int_X(), texture_char_);
-}
 void Knight::key_pressed(int key) {
   const std::map<int, void (Knight::*)()> key_map = {
       {KEY_UP, &Knight::pressed_Up},
       {KEY_DOWN, &Knight::pressed_Down},
       {KEY_LEFT, &Knight::pressed_Left},
       {KEY_RIGHT, &Knight::pressed_Right}};
-  (this->*(key_map.find(key)->second))();
+  auto it = key_map.find(key);
+  if (it != key_map.end()) {
+    (this->*(it->second))();
+  }
 }
 void Knight::pressed_Up() { Move({0, -1}); }
 void Knight::pressed_Down() { Move({0, 1}); }
 void Knight::pressed_Left() { Move({-1, 0}); }
 void Knight::pressed_Right() { Move({1, 0}); }
 
-Zombie::Zombie(Point pos) {}
+Zombie::Zombie(Point pos, char texture) {
+  pos_ = pos;
+  texture_char_ = texture;
+}
 void Zombie::Update() {}
-void Zombie::Draw() {}

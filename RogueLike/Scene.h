@@ -19,7 +19,7 @@ class Scene {
 
 class DungeonMap : public Scene {
  public:
-  DungeonMap(std::istream& textMap, Knight &kn);
+  DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn);
   void spawn_knight();
   void set_pos_spawn(Point pos);
   Point get_pos_sawn();
