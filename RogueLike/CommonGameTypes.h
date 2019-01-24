@@ -2,34 +2,35 @@
 #include <limits>
 struct Point {
   Point();
-  Point(double X, double Y);
+  Point(double _X, double _Y);
+  Point(const Point& pt);
   double X;
   double Y;
-  int get_int_X() const { return (int)X; }
-  int get_int_Y() const { return (int)Y; }
+  int get_int_X() const;
+  int get_int_Y() const;
 };
 struct VectorMath {
   double X;
   double Y;
-  int get_int_X() const { return (int)X; }
-  int get_int_Y() const { return (int)Y; }
+  int get_int_X() const;
+  int get_int_Y() const;
 };
 class LimitedValue {
  public:
-  LimitedValue(int value, int max = INT_MAX, int min = INT_MIN);
+  LimitedValue(int value = 0, int max = INT_MAX, int min = INT_MIN);
   LimitedValue(const LimitedValue& lv);  // copy
 
   int get_value() const;
-  void set_value();
+  void set_value(int value);
 
   int get_max() const;
-  void set_max();
+  void set_max(int max);
 
   int get_min() const;
-  void set_min();
+  void set_min(int min);
 
  private:
-  int value;
-  int max;
-  int min;
+  int value_;
+  int max_;
+  int min_;
 };

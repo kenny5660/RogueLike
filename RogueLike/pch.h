@@ -22,6 +22,8 @@
 #include "CommonGameTypes.h"
 #include "GameObject.h"
 #include "game_database.h"
+#include "StartGame.h"
+#include "Scene.h"
 // TODO: add headers that you want to pre-compile here
 
 #endif //PCH_H

@@ -170,6 +170,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="RogueGame.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="StartGame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonGameTypes.cpp" />
@@ -183,6 +184,7 @@
     </ClCompile>
     <ClCompile Include="RogueGame.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="StartGame.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
