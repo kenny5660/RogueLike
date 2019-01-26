@@ -1,13 +1,27 @@
 #include "pch.h"
 Scene::Scene() {}
-void Scene::AddObject(std::shared_ptr<GameObject> game_object) {
-  gameObjects_.Insert(game_object);
+void Scene::AddObject(std::shared_ptr<GameObject> game_object, bool is_static) {
+  gameObjects_.Insert(game_object, is_static);
 }
 void Scene::DelObject(ObjectId id) { gameObjects_.Remove(id); }
 void Scene::Update() {
   auto vec_objects = gameObjects_.Data();
   for (auto it = vec_objects.begin(); it != vec_objects.end(); it++) {
     (**it).Update();
+  }
+}
+void Scene::ChekColide() {
+  auto vec_objects = gameObjects_.Data();
+  auto active_objects = gameObjects_.Data_non_static();
+  for (auto it = vec_objects.begin(); it != vec_objects.end(); it++) {
+    for (auto it_col = active_objects.begin(); it_col != active_objects.end();
+         it_col++) {
+      if ((*it)->get_id() != (*it_col)->get_id()) {
+        if ((*it)->get_pos() == (*it_col)->get_pos()) {
+          (*it)->Collide(**it_col);
+        }
+      }
+    }
   }
 }
 
@@ -19,7 +33,7 @@ void Scene::Draw() {
 }
 
 void create_Wall(DungeonMap& map, const Point& pos) {
-  map.AddObject(std::shared_ptr<GameObject>(new Wall(pos)));
+  map.AddObject(std::shared_ptr<GameObject>(new Wall(pos)), true);
 }
 void create_Zombie(DungeonMap& map, const Point& pos) {
   map.AddObject(std::shared_ptr<GameObject>(new Zombie(pos)));

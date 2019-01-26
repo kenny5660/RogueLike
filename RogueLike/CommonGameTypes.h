@@ -8,12 +8,14 @@ struct Point {
   double Y;
   int get_int_X() const;
   int get_int_Y() const;
+  bool operator==(const Point& lhs);
 };
 struct VectorMath {
   double X;
   double Y;
   int get_int_X() const;
   int get_int_Y() const;
+  bool operator==(const VectorMath& lhs);
 };
 class LimitedValue {
  public:

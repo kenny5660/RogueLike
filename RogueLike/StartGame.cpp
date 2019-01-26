@@ -23,7 +23,9 @@ void StartGame() {
     clear();
     map_1lvl->getKnight().key_pressed(keyDown);
     map_1lvl->Update();
+    map_1lvl->ChekColide();
     map_1lvl->Draw();
+   // flushinp();
   }
   endwin();
   inputMap.close();

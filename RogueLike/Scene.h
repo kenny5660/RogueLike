@@ -6,11 +6,11 @@ const int max_scene_heght = 500;
 class Scene {
  public:
   Scene();
-  void AddObject(std::shared_ptr<GameObject> game_object);
+  void AddObject(std::shared_ptr<GameObject> game_object,bool is_static = false);
   void DelObject(ObjectId id);
   void Update();
   void Draw();
-
+  void ChekColide();
  protected:
   GameDatabase gameObjects_;
   int width_;
@@ -28,6 +28,4 @@ class DungeonMap : public Scene {
   std::shared_ptr<Knight> kn_;
   Point pos_spawn_;
   void parse_file(std::istream& textMap);
-
-
 };

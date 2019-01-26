@@ -6,68 +6,45 @@ bool operator>(const GameObject& a, const GameObject& b) {
 
 GameDatabase::GameDatabase() : incID(0) {}
 
-void GameDatabase::Insert(std::shared_ptr<GameObject> game_object) {
+void GameDatabase::Insert(std::shared_ptr<GameObject> game_object,
+                          bool is_static) {
   game_object->set_id(incID++);
-  auto it = data_base_.find(game_object->get_id());
-    data_base_.insert(std::pair<ObjectId, std::shared_ptr<GameObject>>(
-        game_object->get_id(), game_object));
-    deleted.erase(game_object->get_id());
-  
-
-  auto itPos = data_base_pos.find(std::make_pair(
-      game_object->get_pos().get_int_X(), game_object->get_pos().get_int_Y()));
-  if (itPos == data_base_pos.end()) {
-    std::set<ObjectId, std::greater<ObjectId>> setId;
-    setId.insert(game_object->get_id());
-    data_base_pos.insert(
-        make_pair(std::make_pair(game_object->get_pos().get_int_X(),
-                                 game_object->get_pos().get_int_Y()),
-                  setId));
-  } else {
-    (*itPos).second.insert(game_object->get_id());
+  data_base_.insert(std::pair<ObjectId, std::shared_ptr<GameObject>>(
+      game_object->get_id(), game_object));
+  if (is_static) {
+    static_objects_.insert(game_object->get_id());
   }
 }
 
 void GameDatabase::Remove(ObjectId id) {
   data_base_.erase(id);
-  deleted.insert(id);
+  if (static_objects_.find(id) != static_objects_.end()) {
+    static_objects_.erase(id);
+  }
 }
 
 std::pair<std::shared_ptr<GameObject>, bool> GameDatabase::DataById(
     ObjectId id) const {
   auto it = data_base_.find(id);
-  auto itDel = deleted.find(id);
-  if (it != data_base_.end() && itDel == deleted.end()) {
+  if (it != data_base_.end()) {
     return std::make_pair(it->second, true);
   } else {
     return std::make_pair(nullptr, false);
   }
 }
 
-std::vector<std::shared_ptr<GameObject>> GameDatabase::DataByPosition(
-    Point pos) const {
-  std::vector<std::shared_ptr<GameObject>> out;
-  auto itName =
-      data_base_pos.find(std::make_pair(pos.get_int_X(), pos.get_int_Y()));
-  if (itName != data_base_pos.end()) {
-    for (auto it = (*itName).second.begin(); it != itName->second.end();
-         ++it) {
-      auto itDel = deleted.find(*it);
-
-      if (itDel == deleted.end()) {
-        auto itData = data_base_.find(*it);
-        out.push_back((*itData).second);
-      }
-    }
-  }
-  return out;
-}
-
 std::vector<std::shared_ptr<GameObject>> GameDatabase::Data() const {
   std::vector<std::shared_ptr<GameObject>> out;
   for (auto it = data_base_.begin(); it != data_base_.end(); ++it) {
-    auto itDel = deleted.find((*it).first);
-    if (itDel == deleted.end()) {
+    out.push_back(it->second);
+  }
+  return out;
+}
+std::vector<std::shared_ptr<GameObject>> GameDatabase::Data_non_static() const {
+  std::vector<std::shared_ptr<GameObject>> out;
+  for (auto it = data_base_.begin(); it != data_base_.end(); ++it) {
+    auto itDel = static_objects_.find((*it).first);
+    if (itDel == static_objects_.end()) {
       out.push_back(it->second);
     }
   }
