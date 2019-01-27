@@ -25,6 +25,12 @@ void Scene::ChekColide() {
   }
 }
 
+bool Scene::get_is_game_over() { return is_game_over_; }
+
+void Scene::set_is_game_over(bool is_game_over) {
+  is_game_over_ = is_game_over;
+}
+
 void Scene::Draw() {
   auto vec_objects = gameObjects_.Data();
   for (auto it = vec_objects.begin(); it != vec_objects.end(); it++) {
@@ -33,11 +39,18 @@ void Scene::Draw() {
 }
 
 void create_Wall(DungeonMap& map, const Point& pos) {
-  map.AddObject(std::shared_ptr<GameObject>(new Wall(map.get_game_config()->get_wall(),pos)), true);
+  map.AddObject(std::shared_ptr<GameObject>(
+                    new Wall(map.get_game_config()->get_wall(), pos)),
+                true);
+}
+void create_aid_kit(DungeonMap& map, const Point& pos) {
+  map.AddObject(std::shared_ptr<GameObject>(
+                    new Aid_kit(map.get_game_config()->get_aid_kit(), pos)),
+                true);
 }
 void create_Zombie(DungeonMap& map, const Point& pos) {
   map.AddObject(std::shared_ptr<GameObject>(
-      new Zombie(map.get_game_config()->get_zombie(), pos)));
+      new Zombie(map.get_game_config()->get_zombie(), pos, &map)));
 }
 
 void set_spawn_knight(DungeonMap& map, const Point& pos) {
@@ -45,15 +58,19 @@ void set_spawn_knight(DungeonMap& map, const Point& pos) {
 }
 
 const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
-    {'#', &create_Wall}, {'Z', &create_Zombie}, {'K', &set_spawn_knight}};
+    {'#', &create_Wall},
+    {'Z', &create_Zombie},
+    {'K', &set_spawn_knight},
+    {'+', &create_aid_kit}};
 
 DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
                        std::shared_ptr<GameConfig> game_config)
-    : kn_(kn),game_config_(game_config) {
+    : kn_(kn), game_config_(game_config) {
   parse_file(textMap);
 }
 void DungeonMap::spawn_knight() {
   kn_->set_pos(pos_spawn_);
+  kn_->set_parent_scene(this);
   AddObject(kn_);
 }
 Knight& DungeonMap::getKnight() { return *kn_; }

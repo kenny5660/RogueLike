@@ -1,6 +1,8 @@
 #pragma once
 #include "pch.h"
+
 #include "game_database.h"
+#include "GameConfig.h"
 const int max_scene_width = 500;
 const int max_scene_heght = 500;
 
@@ -12,10 +14,13 @@ class Scene {
   void Update();
   void Draw();
   void ChekColide();
+  bool get_is_game_over();
+  void set_is_game_over(bool is_game_over);
  protected:
   GameDatabase gameObjects_;
   int width_;
   int heght_;
+  bool is_game_over_ = false;
 };
 
 class DungeonMap : public Scene {

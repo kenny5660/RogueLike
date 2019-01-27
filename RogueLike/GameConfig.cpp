@@ -19,7 +19,11 @@ GameConfig::GameConfig(std::string path) {
   Entity_set_from_json(zombie, doc["zombie"]);
   Entity_set_from_json(knight, doc["knight"]);
   wall.set_texture(doc["wall"]["texture"].GetString()[0]);
+  aid_kit.set_texture(doc["aid_kit"]["texture"].GetString()[0]);
+  aid_kit.set_hp_regen(doc["aid_kit"]["hp_regen"].GetInt());
 }
 Zombie& GameConfig::get_zombie() { return zombie; }
 Knight& GameConfig::get_knight() { return knight; }
 Wall& GameConfig::get_wall() { return wall; }
+
+Aid_kit& GameConfig::get_aid_kit() { return aid_kit; }

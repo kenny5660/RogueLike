@@ -29,5 +29,9 @@
     },
     "wall": {
         "texture":"#"
+    },
+    "aid_kit": {
+        "texture":"+",
+        "hp_regen": 5
     }
 }
