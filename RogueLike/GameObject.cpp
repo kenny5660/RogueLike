@@ -19,22 +19,19 @@ Wall::Wall(Point pos) {
   pos_ = pos;
   texture_char_ = '#';
 }
+Wall::Wall(const Wall& wall, Point pos) {
+  pos_ = pos;
+  texture_char_ = wall.texture_char_;
+}
 
 void Wall::Update() {}
 void Wall::Collide(GameObject& g) { return g.Collide(*this); }
 
-EmptyBlock::EmptyBlock(Point pos) {
-  pos_ = pos;
-  texture_char_ = '.';
-}
-
-void EmptyBlock::Update() {}
-
-void EmptyBlock::Draw() {
-  mvaddch(pos_.get_int_Y(), pos_.get_int_X(), texture_char_);
-}
-
 Entity::Entity() {}
+LimitedValue& Entity::get_hp() { return hp_; }
+LimitedValue& Entity::get_mp() { return mp_; }
+int Entity::get_damage() { return damage_; }
+void Entity::set_damage(int damage) { damage_ = damage; }
 
 void Entity::Move(VectorMath vector_move) {
   Point newPos(pos_.X + vector_move.X, pos_.Y + vector_move.Y);
@@ -47,6 +44,13 @@ void Entity::Move(VectorMath vector_move) {
 Knight::Knight(Point pos, char texture) {
   pos_ = pos;
   texture_char_ = texture;
+}
+Knight::Knight(const Knight& knight, Point pos) {
+  pos_ = pos;
+  texture_char_ = knight.texture_char_;
+  hp_ = knight.hp_;
+  mp_ = knight.mp_;
+  damage_ = knight.damage_;
 }
 
 void Knight::Update() {}
@@ -75,6 +79,13 @@ Zombie::Zombie(Point pos, char texture) {
   texture_char_ = texture;
   cur_vec_move_ = {0, 0};
   random_set_vec_move();
+}
+Zombie::Zombie(const Zombie& zombie, Point pos) {
+  pos_ = pos;
+  texture_char_ = zombie.texture_char_;
+  hp_ = zombie.hp_;
+  mp_ = zombie.mp_;
+  damage_ = zombie.damage_;
 }
 void Zombie::Collide(Zombie& z) {
   pos_ = old_pos_;

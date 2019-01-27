@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <iostream>
 #include <fstream>
+#include <time.h>
 void ReadConfig(std::string path) {
 
 }
@@ -12,6 +13,7 @@ void StartGame() {
   curs_set(0);
   noecho();
   raw();
+  srand(time(0));
   std::ifstream inputMap("maps/1lvl.dmap");
   std::shared_ptr<Knight> K_player(new Knight({-1, -1}));
   std::unique_ptr<DungeonMap> map_1lvl(new DungeonMap(inputMap, K_player));

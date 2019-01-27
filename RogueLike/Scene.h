@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "game_database.h"
 const int max_scene_width = 500;
 const int max_scene_heght = 500;
 
