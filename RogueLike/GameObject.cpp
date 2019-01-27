@@ -86,6 +86,7 @@ Zombie::Zombie(const Zombie& zombie, Point pos) {
   hp_ = zombie.hp_;
   mp_ = zombie.mp_;
   damage_ = zombie.damage_;
+  random_set_vec_move();
 }
 void Zombie::Collide(Zombie& z) {
   pos_ = old_pos_;

@@ -1,0 +1,33 @@
+{
+    "zombie": {
+        "hp":{
+            "max":7,
+            "min":0,
+            "value":7
+        },
+        "mp":{
+            "max":10,
+            "min":0,
+            "value":10
+        },
+        "damage": 2,
+        "texture":"Z"
+    },
+    "knight": {
+        "hp":{
+            "max":20,
+            "min":0,
+            "value":15
+        },
+        "mp":{
+            "max":10,
+            "min":0,
+            "value":10
+        },
+        "damage": 5,
+        "texture":"K"
+    },
+    "wall": {
+        "texture":"#"
+    }
+}

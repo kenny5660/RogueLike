@@ -33,10 +33,11 @@ void Scene::Draw() {
 }
 
 void create_Wall(DungeonMap& map, const Point& pos) {
-  map.AddObject(std::shared_ptr<GameObject>(new Wall(pos)), true);
+  map.AddObject(std::shared_ptr<GameObject>(new Wall(map.get_game_config()->get_wall(),pos)), true);
 }
 void create_Zombie(DungeonMap& map, const Point& pos) {
-  map.AddObject(std::shared_ptr<GameObject>(new Zombie(pos)));
+  map.AddObject(std::shared_ptr<GameObject>(
+      new Zombie(map.get_game_config()->get_zombie(), pos)));
 }
 
 void set_spawn_knight(DungeonMap& map, const Point& pos) {
@@ -46,8 +47,9 @@ void set_spawn_knight(DungeonMap& map, const Point& pos) {
 const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
     {'#', &create_Wall}, {'Z', &create_Zombie}, {'K', &set_spawn_knight}};
 
-DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn)
-    : kn_(kn) {
+DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
+                       std::shared_ptr<GameConfig> game_config)
+    : kn_(kn),game_config_(game_config) {
   parse_file(textMap);
 }
 void DungeonMap::spawn_knight() {
@@ -55,6 +57,9 @@ void DungeonMap::spawn_knight() {
   AddObject(kn_);
 }
 Knight& DungeonMap::getKnight() { return *kn_; }
+std::shared_ptr<GameConfig> DungeonMap::get_game_config() {
+  return game_config_;
+}
 void DungeonMap::set_pos_spawn(Point pos) { pos_spawn_ = pos; }
 Point DungeonMap::get_pos_sawn() { return pos_spawn_; }
 

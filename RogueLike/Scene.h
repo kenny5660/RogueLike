@@ -20,13 +20,16 @@ class Scene {
 
 class DungeonMap : public Scene {
  public:
-  DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn);
+  DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
+             std::shared_ptr<GameConfig> game_config);
   void spawn_knight();
   void set_pos_spawn(Point pos);
   Point get_pos_sawn();
   Knight& getKnight();
+  std::shared_ptr<GameConfig> get_game_config();
  private:
   std::shared_ptr<Knight> kn_;
   Point pos_spawn_;
   void parse_file(std::istream& textMap);
+  std::shared_ptr<GameConfig> game_config_;
 };
