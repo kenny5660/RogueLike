@@ -1,26 +1,28 @@
 #include "pch.h"
+
+#include <sstream>
 enum fight_result { DEAD_A, DEAD_B, NO_DEAD, DEAD_BOTH };
 std::pair<bool, bool> fight(Entity& a, Entity& b) {
-  a.get_hp().set_value(a.get_hp().get_value() - b.get_damage());
-  b.get_hp().set_value(b.get_hp().get_value() - a.get_damage());
+  a.get_hp().set_value(a.get_hp().get_value() - b.Get_damage());
+  b.get_hp().set_value(b.get_hp().get_value() - a.Get_damage());
   bool is_a_dead = a.get_hp().get_value() <= a.get_hp().get_min();
   bool is_b_dead = b.get_hp().get_value() <= b.get_hp().get_min();
   return std::make_pair(is_a_dead, is_b_dead);
 }
 GameObject::GameObject() {}
 
-Point GameObject::get_pos() const { return pos_; }
+Point GameObject::Get_pos() const { return pos_; }
 
-void GameObject::set_pos(Point pos) { pos_ = pos; }
+void GameObject::Set_pos(Point pos) { pos_ = pos; }
 
-Point GameObject::get_old_pos() { return old_pos_; }
+Point GameObject::Get_old_pos() { return old_pos_; }
 
-ObjectId GameObject::get_id() const { return id_; }
+ObjectId GameObject::Get_id() const { return id_; }
 
-void GameObject::set_id(ObjectId id) { id_ = id; }
+void GameObject::Set_id(ObjectId id) { id_ = id; }
 
-char GameObject::get_texture() const { return texture_char_; }
-void GameObject::set_texture(char texture) { texture_char_ = texture; }
+char GameObject::Get_texture() const { return texture_char_; }
+void GameObject::Set_texture(char texture) { texture_char_ = texture; }
 void GameObject::Draw() {
   mvaddch(pos_.get_int_Y(), pos_.get_int_X(), texture_char_);
 }
@@ -39,14 +41,17 @@ void Wall::Collide(GameObject& g) { return g.Collide(*this); }
 Entity::Entity() {}
 LimitedValue& Entity::get_hp() { return hp_; }
 LimitedValue& Entity::get_mp() { return mp_; }
-int Entity::get_damage() { return damage_; }
-void Entity::set_damage(int damage) { damage_ = damage; }
+int Entity::Get_damage() { return damage_; }
+void Entity::Set_damage(int damage) { damage_ = damage; }
 
-void Entity::set_parent_scene(Scene* scene) { parent_scene_ = scene; }
+Scene* Entity::Get_parent_scene() { return parent_scene_; }
+
+void Entity::Set_parent_scene(Scene* scene) { parent_scene_ = scene; }
 
 void Entity::dead() { parent_scene_->DelObject(id_); }
 
 void Entity::Move(VectorMath vector_move) {
+  cur_vec_move_ = vector_move;
   Point newPos(pos_.X + vector_move.X, pos_.Y + vector_move.Y);
   old_pos_.X = pos_.X;
   old_pos_.Y = pos_.Y;
@@ -65,50 +70,56 @@ Knight::Knight(const Knight& knight, Point pos, Scene* parent_scene) {
   hp_ = knight.hp_;
   mp_ = knight.mp_;
   damage_ = knight.damage_;
+  damage_projectile_ = knight.damage_projectile_;
 }
 
 void Knight::Update() {}
 void Knight::Collide(GameObject& g) { return g.Collide(*this); }
-void Knight::Collide(Zombie& z) {
-  z.set_pos(z.get_old_pos());
+void Knight::Collide(Monster& z) {
+  z.Set_pos(z.Get_old_pos());
   pos_ = old_pos_;
   auto result = fight(*this, z);
   if (result.first) {
     dead();
   }
   if (result.second) {
-    set_points(get_points() + 1);
+    Set_points(Get_points() + 1);
     z.dead();
   }
 }
 void Knight::Collide(Wall& z) { pos_ = old_pos_; }
 
-void Knight::Collide(Aid_kit& g) {
-  hp_.set_value(hp_.get_value() + g.get_hp_regen());
-  parent_scene_->DelObject(g.get_id());
+void Knight::Collide(AidKit& g) {
+  hp_.set_value(hp_.get_value() + g.Get_hp_regen());
+  parent_scene_->DelObject(g.Get_id());
 }
 
-int Knight::get_points() { return points_; }
+int Knight::Get_points() { return points_; }
 
-void Knight::set_points(int points) { points_ = points; }
+void Knight::Set_points(int points) { points_ = points; }
 
 void Knight::key_pressed(int key) {
   const std::map<int, void (Knight::*)()> key_map = {
-      {KEY_UP, &Knight::pressed_Up},
-      {KEY_DOWN, &Knight::pressed_Down},
-      {KEY_LEFT, &Knight::pressed_Left},
-      {KEY_RIGHT, &Knight::pressed_Right}};
+      {KEY_UP, &Knight::PressedUp},
+      {KEY_DOWN, &Knight::PressedDown},
+      {KEY_LEFT, &Knight::PressedLeft},
+      {KEY_RIGHT, &Knight::PressedRight},
+      {' ', &Knight::PressedSpace}};
   auto it = key_map.find(key);
   if (it != key_map.end()) {
     (this->*(it->second))();
   }
 }
-void Knight::dead() { parent_scene_->set_is_game_over(true); }
+void Knight::dead() { parent_scene_->Set_is_game_over(true); }
 
-void Knight::pressed_Up() { Move({0, -1}); }
-void Knight::pressed_Down() { Move({0, 1}); }
-void Knight::pressed_Left() { Move({-1, 0}); }
-void Knight::pressed_Right() { Move({1, 0}); }
+void Knight::PressedUp() { Move({0, -1}); }
+void Knight::PressedDown() { Move({0, 1}); }
+void Knight::PressedLeft() { Move({-1, 0}); }
+void Knight::PressedRight() { Move({1, 0}); }
+void Knight::PressedSpace() {
+  parent_scene_->AddObject(std::shared_ptr<GameObject>(new ProjectileKnight(
+      {pos_.X, pos_.Y}, damage_projectile_, cur_vec_move_, this)));
+}
 
 Zombie::Zombie(Point pos, char texture) {
   pos_ = pos;
@@ -126,22 +137,23 @@ Zombie::Zombie(const Zombie& zombie, Point pos, Scene* parent_scene) {
   random_set_vec_move();
 }
 void Zombie::Collide(Knight& k) {
-  k.set_pos(k.get_old_pos());
+  k.Set_pos(k.Get_old_pos());
   pos_ = old_pos_;
   auto result = fight(*this, k);
   if (result.first) {
-    k.set_points(k.get_points() + 1);
+    k.Set_points(k.Get_points() + 1);
     dead();
   }
   if (result.second) {
     k.dead();
   }
 }
-void Zombie::Collide(Aid_kit& g) {
-  hp_.set_value(hp_.get_value() + g.get_hp_regen());
-  parent_scene_->DelObject(g.get_id());
+void Zombie::Collide(AidKit& g) {
+  hp_.set_value(hp_.get_value() + g.Get_hp_regen());
+  parent_scene_->DelObject(g.Get_id());
 }
-void Zombie::Collide(Zombie& z) {
+void Zombie::Collide(Projectile& g) { g.Collide(*this); }
+void Zombie::Collide(Monster& z) {
   pos_ = old_pos_;
   random_set_vec_move();
 }
@@ -157,22 +169,105 @@ void Zombie::random_set_vec_move() {
 void Zombie::Update() { Move(cur_vec_move_); }
 void Zombie::Collide(GameObject& g) { return g.Collide(*this); }
 
-Aid_kit::Aid_kit(Point pos, int hp_regen) {
+AidKit::AidKit(Point pos, int hp_regen) {
   pos_ = pos;
   hp_regen_ = hp_regen;
 }
 
-Aid_kit::Aid_kit(const Aid_kit& aid, Point pos) {
+AidKit::AidKit(const AidKit& aid, Point pos) {
   hp_regen_ = aid.hp_regen_;
   texture_char_ = aid.texture_char_;
   pos_ = pos;
 }
 
-void Aid_kit::set_hp_regen(int hp_regen) { hp_regen_ = hp_regen; }
+void AidKit::Set_hp_regen(int hp_regen) { hp_regen_ = hp_regen; }
 
-int Aid_kit::get_hp_regen() { return hp_regen_; }
+int AidKit::Get_hp_regen() { return hp_regen_; }
 
-void Aid_kit::Update() {}
+void AidKit::Update() {}
 
-void Aid_kit::Collide(GameObject& g) { return g.Collide(*this); }
+void AidKit::Collide(GameObject& g) { return g.Collide(*this); }
 
+GuiPlayer::GuiPlayer(Point pos, std::shared_ptr<Knight> kn) {
+  pos_ = pos;
+  kn_ = kn;
+}
+void GuiPlayer::Draw() {
+  std::stringstream ss;
+  ss << "HP: " << kn_->get_hp().get_value() << "/" << kn_->get_hp().get_max();
+  mvaddstr(pos_.get_int_Y(), pos_.get_int_X(), ss.str().c_str());
+  ss.str(std::string());
+
+  ss << "MP: " << kn_->get_mp().get_value() << "/" << kn_->get_mp().get_max();
+  mvaddstr(pos_.get_int_Y() + 1, pos_.get_int_X(), ss.str().c_str());
+  ss.str(std::string());
+
+  ss << "Points: " << kn_->Get_points();
+  mvaddstr(pos_.get_int_Y() + 2, pos_.get_int_X(), ss.str().c_str());
+  ss.str(std::string());
+}
+
+void GuiPlayer::Update() {}
+
+Projectile::Projectile(Point pos, int damage, VectorMath vec_move,
+                       Scene* parent_scene) {
+  pos_ = pos;
+  cur_vec_move_ = vec_move;
+  damage_ = damage;
+  parent_scene_ = parent_scene;
+  if (cur_vec_move_ == VectorMath{0, 1}) {
+    texture_char_ = texture_down_;
+  }
+  if (cur_vec_move_ == VectorMath{0, -1}) {
+    texture_char_ = texture_up_;
+  }
+  if (cur_vec_move_ == VectorMath{1, 0}) {
+    texture_char_ = texture_right_;
+  }
+  if (cur_vec_move_ == VectorMath{-1, 0}) {
+    texture_char_ = texture_left_;
+  }
+}
+void Projectile::Collide(GameObject& g) { return g.Collide(*this); }
+
+void Projectile::Collide(Wall& g) { dead(); }
+
+void Projectile::Collide(Monster& g) {
+  auto result = fight(*this, g);
+  dead();
+  if (result.second) {
+    g.dead();
+  }
+}
+void Projectile::Collide(Knight& g) {
+  auto result = fight(*this, g);
+  dead();
+  if (result.second) {
+    g.dead();
+  }
+}
+
+void Projectile::Collide(Projectile& g) {
+  g.dead();
+  dead();
+}
+
+void Projectile::Update() { Move(cur_vec_move_); }
+
+void Projectile::Set_texture_left(char t) { texture_left_ = t; }
+void Projectile::Set_texture_right(char t) { texture_right_ = t; }
+void Projectile::Set_texture_down(char t) { texture_down_ = t; }
+void Projectile::Set_texture_up(char t) { texture_up_ = t; }
+
+ProjectileKnight::ProjectileKnight(Point pos, int damage, VectorMath vec_move,
+                                   Knight* kn)
+    : Projectile(pos, damage, vec_move, kn->Get_parent_scene()), kn_(kn) {}
+
+void ProjectileKnight::Collide(Monster& g) {
+  auto result = fight(*this, g);
+  dead();
+  if (result.second) {
+    kn_->Set_points(kn_->Get_points() + 1);
+    g.dead();
+  }
+}

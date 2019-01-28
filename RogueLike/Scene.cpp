@@ -1,4 +1,5 @@
 #include "pch.h"
+
 Scene::Scene() {}
 void Scene::AddObject(std::shared_ptr<GameObject> game_object, bool is_static) {
   gameObjects_.Insert(game_object, is_static);
@@ -16,8 +17,8 @@ void Scene::ChekColide() {
   for (auto it = vec_objects.begin(); it != vec_objects.end(); it++) {
     for (auto it_col = active_objects.begin(); it_col != active_objects.end();
          it_col++) {
-      if ((*it)->get_id() != (*it_col)->get_id()) {
-        if ((*it)->get_pos() == (*it_col)->get_pos()) {
+      if ((*it)->Get_id() != (*it_col)->Get_id()) {
+        if ((*it)->Get_pos() == (*it_col)->Get_pos()) {
           (*it)->Collide(**it_col);
         }
       }
@@ -25,9 +26,9 @@ void Scene::ChekColide() {
   }
 }
 
-bool Scene::get_is_game_over() { return is_game_over_; }
+bool Scene::Get_is_game_over() { return is_game_over_; }
 
-void Scene::set_is_game_over(bool is_game_over) {
+void Scene::Set_is_game_over(bool is_game_over) {
   is_game_over_ = is_game_over;
 }
 
@@ -40,21 +41,21 @@ void Scene::Draw() {
 
 void create_Wall(DungeonMap& map, const Point& pos) {
   map.AddObject(std::shared_ptr<GameObject>(
-                    new Wall(map.get_game_config()->get_wall(), pos)),
+                    new Wall(map.Get_game_config()->Get_wall(), pos)),
                 true);
 }
 void create_aid_kit(DungeonMap& map, const Point& pos) {
   map.AddObject(std::shared_ptr<GameObject>(
-                    new Aid_kit(map.get_game_config()->get_aid_kit(), pos)),
+                    new AidKit(map.Get_game_config()->Get_aid_kit(), pos)),
                 true);
 }
 void create_Zombie(DungeonMap& map, const Point& pos) {
   map.AddObject(std::shared_ptr<GameObject>(
-      new Zombie(map.get_game_config()->get_zombie(), pos, &map)));
+      new Zombie(map.Get_game_config()->Get_zombie(), pos, &map)));
 }
 
 void set_spawn_knight(DungeonMap& map, const Point& pos) {
-  map.set_pos_spawn(pos);
+  map.Set_pos_spawn(pos);
 }
 
 const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
@@ -66,21 +67,24 @@ const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
 DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
                        std::shared_ptr<GameConfig> game_config)
     : kn_(kn), game_config_(game_config) {
-  parse_file(textMap);
+  ParseFile(textMap);
+  AddObject(std::shared_ptr<GameObject>(
+                new GuiPlayer({width_ + 10.0, 5}, this->kn_)),
+            true);
 }
-void DungeonMap::spawn_knight() {
-  kn_->set_pos(pos_spawn_);
-  kn_->set_parent_scene(this);
+void DungeonMap::SpawnKnight() {
+  kn_->Set_pos(pos_spawn_);
+  kn_->Set_parent_scene(this);
   AddObject(kn_);
 }
-Knight& DungeonMap::getKnight() { return *kn_; }
-std::shared_ptr<GameConfig> DungeonMap::get_game_config() {
+Knight& DungeonMap::Get_Knight() { return *kn_; }
+std::shared_ptr<GameConfig> DungeonMap::Get_game_config() {
   return game_config_;
 }
-void DungeonMap::set_pos_spawn(Point pos) { pos_spawn_ = pos; }
-Point DungeonMap::get_pos_sawn() { return pos_spawn_; }
+void DungeonMap::Set_pos_spawn(Point pos) { pos_spawn_ = pos; }
+Point DungeonMap::Get_pos_sawn() { return pos_spawn_; }
 
-void DungeonMap::parse_file(std::istream& textMap) {
+void DungeonMap::ParseFile(std::istream& textMap) {
   int curY = 0;
   char line[max_scene_width + 1];
   while (textMap.getline(line, max_scene_width)) {

@@ -8,8 +8,8 @@ void Entity_set_from_json(Entity& ent, rapidjson::Value& val) {
   ent.get_mp().set_max(val["mp"]["max"].GetInt());
   ent.get_mp().set_min(val["mp"]["min"].GetInt());
   ent.get_mp().set_value(val["mp"]["value"].GetInt());
-  ent.set_damage(val["damage"].GetInt());
-  ent.set_texture(val["texture"].GetString()[0]);
+  ent.Set_damage(val["damage"].GetInt());
+  ent.Set_texture(val["texture"].GetString()[0]);
 }
 GameConfig::GameConfig(std::string path) {
   rapidjson::Document doc;
@@ -18,12 +18,12 @@ GameConfig::GameConfig(std::string path) {
   doc.Parse(config_str.c_str());
   Entity_set_from_json(zombie, doc["zombie"]);
   Entity_set_from_json(knight, doc["knight"]);
-  wall.set_texture(doc["wall"]["texture"].GetString()[0]);
-  aid_kit.set_texture(doc["aid_kit"]["texture"].GetString()[0]);
-  aid_kit.set_hp_regen(doc["aid_kit"]["hp_regen"].GetInt());
+  wall.Set_texture(doc["wall"]["texture"].GetString()[0]);
+  aid_kit.Set_texture(doc["aid_kit"]["texture"].GetString()[0]);
+  aid_kit.Set_hp_regen(doc["aid_kit"]["hp_regen"].GetInt());
 }
-Zombie& GameConfig::get_zombie() { return zombie; }
-Knight& GameConfig::get_knight() { return knight; }
-Wall& GameConfig::get_wall() { return wall; }
+Zombie& GameConfig::Get_zombie() { return zombie; }
+Knight& GameConfig::Get_knight() { return knight; }
+Wall& GameConfig::Get_wall() { return wall; }
 
-Aid_kit& GameConfig::get_aid_kit() { return aid_kit; }
+AidKit& GameConfig::Get_aid_kit() { return aid_kit; }

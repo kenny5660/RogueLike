@@ -1,18 +1,18 @@
 #include "pch.h"
 
 bool operator>(const GameObject& a, const GameObject& b) {
-  return a.get_id() > b.get_id();
+  return a.Get_id() > b.Get_id();
 }
 
 GameDatabase::GameDatabase() : incID(0) {}
 
 void GameDatabase::Insert(std::shared_ptr<GameObject> game_object,
                           bool is_static) {
-  game_object->set_id(incID++);
+  game_object->Set_id(incID++);
   data_base_.insert(std::pair<ObjectId, std::shared_ptr<GameObject>>(
-      game_object->get_id(), game_object));
+      game_object->Get_id(), game_object));
   if (is_static) {
-    static_objects_.insert(game_object->get_id());
+    static_objects_.insert(game_object->Get_id());
   }
 }
 

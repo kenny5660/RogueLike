@@ -5,13 +5,13 @@ class GameConfig;
 class GameConfig {
  public:
   GameConfig(std::string path);
-  Zombie& get_zombie();
-  Knight& get_knight();
-  Wall& get_wall();
-  Aid_kit& get_aid_kit();
+  Zombie& Get_zombie();
+  Knight& Get_knight();
+  Wall& Get_wall();
+  AidKit& Get_aid_kit();
  private:
   Zombie zombie;
   Knight knight;
   Wall wall;
-  Aid_kit aid_kit;
+  AidKit aid_kit;
 };

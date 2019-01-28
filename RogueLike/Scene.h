@@ -14,8 +14,8 @@ class Scene {
   void Update();
   void Draw();
   void ChekColide();
-  bool get_is_game_over();
-  void set_is_game_over(bool is_game_over);
+  bool Get_is_game_over();
+  void Set_is_game_over(bool is_game_over);
  protected:
   GameDatabase gameObjects_;
   int width_;
@@ -27,14 +27,14 @@ class DungeonMap : public Scene {
  public:
   DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
              std::shared_ptr<GameConfig> game_config);
-  void spawn_knight();
-  void set_pos_spawn(Point pos);
-  Point get_pos_sawn();
-  Knight& getKnight();
-  std::shared_ptr<GameConfig> get_game_config();
+  void SpawnKnight();
+  void Set_pos_spawn(Point pos);
+  Point Get_pos_sawn();
+  Knight& Get_Knight();
+  std::shared_ptr<GameConfig> Get_game_config();
  private:
   std::shared_ptr<Knight> kn_;
   Point pos_spawn_;
-  void parse_file(std::istream& textMap);
+  void ParseFile(std::istream& textMap);
   std::shared_ptr<GameConfig> game_config_;
 };
