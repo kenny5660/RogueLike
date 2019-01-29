@@ -41,6 +41,7 @@ void Wall::Collide(GameObject& g) { return g.Collide(*this); }
 Entity::Entity() {}
 LimitedValue& Entity::get_hp() { return hp_; }
 LimitedValue& Entity::get_mp() { return mp_; }
+void Entity::Update() { Move(cur_vec_move_); }
 int Entity::Get_damage() { return damage_; }
 void Entity::Set_damage(int damage) { damage_ = damage; }
 
@@ -48,11 +49,17 @@ Scene* Entity::Get_parent_scene() { return parent_scene_; }
 
 void Entity::Set_parent_scene(Scene* scene) { parent_scene_ = scene; }
 
+double Entity::Get_speed() { return speed_; }
+
+void Entity::Set_speed(double speed) { speed_ = speed; }
+
 void Entity::dead() { parent_scene_->DelObject(id_); }
 
 void Entity::Move(VectorMath vector_move) {
   cur_vec_move_ = vector_move;
-  Point newPos(pos_.X + vector_move.X, pos_.Y + vector_move.Y);
+  Point newPos(
+      pos_.X + vector_move.X * speed_ * parent_scene_->Get_elapsed_time(),
+      pos_.Y + vector_move.Y * speed_ * parent_scene_->Get_elapsed_time());
   old_pos_.X = pos_.X;
   old_pos_.Y = pos_.Y;
   pos_.X = newPos.X;
@@ -71,9 +78,10 @@ Knight::Knight(const Knight& knight, Point pos, Scene* parent_scene) {
   mp_ = knight.mp_;
   damage_ = knight.damage_;
   damage_projectile_ = knight.damage_projectile_;
+  speed_ = knight.speed_;
+  speed_projectile_ = knight.speed_projectile_;
 }
 
-void Knight::Update() {}
 void Knight::Collide(GameObject& g) { return g.Collide(*this); }
 void Knight::Collide(Monster& z) {
   z.Set_pos(z.Get_old_pos());
@@ -103,17 +111,21 @@ void Knight::key_pressed(int key) {
   auto it = key_map.find(key);
   if (it != key_map.end()) {
     (this->*(it->second))();
+  } else {
+    // PressedNothing();
   }
 }
 void Knight::dead() { parent_scene_->Set_is_game_over(true); }
-
-void Knight::PressedUp() { Move({0, -1}); }
-void Knight::PressedDown() { Move({0, 1}); }
-void Knight::PressedLeft() { Move({-1, 0}); }
-void Knight::PressedRight() { Move({1, 0}); }
+void Knight::PressedNothing() { cur_vec_move_ = {0, 0}; }
+void Knight::PressedUp() { cur_vec_move_ = {0, -1}; }
+void Knight::PressedDown() { cur_vec_move_ = {0, 1}; }
+void Knight::PressedLeft() { cur_vec_move_ = {-1, 0}; }
+void Knight::PressedRight() { cur_vec_move_ = {1, 0}; }
 void Knight::PressedSpace() {
   parent_scene_->AddObject(std::shared_ptr<GameObject>(new ProjectileKnight(
-      {pos_.X, pos_.Y}, damage_projectile_, cur_vec_move_, this)));
+      {pos_.X + cur_vec_move_.get_int_X(), pos_.Y + cur_vec_move_.get_int_Y()},
+      damage_projectile_,
+                           cur_vec_move_,speed_projectile_, this)));
 }
 
 Zombie::Zombie(Point pos, char texture) {
@@ -129,6 +141,7 @@ Zombie::Zombie(const Zombie& zombie, Point pos, Scene* parent_scene) {
   hp_ = zombie.hp_;
   mp_ = zombie.mp_;
   damage_ = zombie.damage_;
+  speed_ = zombie.speed_;
   random_set_vec_move();
 }
 void Zombie::Collide(Knight& k) {
@@ -200,11 +213,12 @@ void GuiPlayer::Draw() {
 
 void GuiPlayer::Update() {}
 
-Projectile::Projectile(Point pos, int damage, VectorMath vec_move,
+Projectile::Projectile(Point pos, int damage, VectorMath vec_move, double speed,
                        Scene* parent_scene) {
   pos_ = pos;
   cur_vec_move_ = vec_move;
   damage_ = damage;
+  speed_ = speed;
   parent_scene_ = parent_scene;
   if (cur_vec_move_ == VectorMath{0, 1}) {
     texture_char_ = texture_down_;
@@ -250,9 +264,9 @@ void Projectile::Set_texture_right(char t) { texture_right_ = t; }
 void Projectile::Set_texture_down(char t) { texture_down_ = t; }
 void Projectile::Set_texture_up(char t) { texture_up_ = t; }
 
-ProjectileKnight::ProjectileKnight(Point pos, int damage, VectorMath vec_move,
+ProjectileKnight::ProjectileKnight(Point pos, int damage, VectorMath vec_move, double speed,
                                    Knight* kn)
-    : Projectile(pos, damage, vec_move, kn->Get_parent_scene()), kn_(kn) {}
+    : Projectile(pos, damage, vec_move, speed,kn->Get_parent_scene()), kn_(kn) {}
 
 void ProjectileKnight::Collide(Monster& g) {
   auto result = fight(*this, g);
@@ -277,17 +291,24 @@ Dragon::Dragon(const Dragon& dragon, Point pos, Scene* parent_scene) {
   damage_ = dragon.damage_;
   damage_projectile_ = dragon.damage_projectile_;
   radius_ = dragon.radius_;
-  //cur_moves_i_ = rand() % 4;
+  speed_ = dragon.speed_;
+  speed_projectile_ = dragon.speed_projectile_;
+  // cur_moves_i_ = rand() % 4;
 }
 
 void Dragon::Update() {
-  if (radius_counter++ == radius_-1) {
+  radius_counter += speed_ * parent_scene_->Get_elapsed_time();
+  if (radius_counter >= radius_ - 1) {
     cur_moves_i_++;
     radius_counter = 0;
+    if (cur_moves_i_ >= 4) {
+      cur_moves_i_ = 0;
+    }
+    int projectile_vector = rand() % 3;
+    if (cur_moves_i_ == projectile_vector) projectile_vector++;
+    Create_projectile(pos_, vector_moves[projectile_vector]);
   }
-  if (cur_moves_i_ >= 4) {
-    cur_moves_i_ = 0;
-  }
+
   Move(vector_moves[cur_moves_i_]);
 }
 
@@ -318,6 +339,12 @@ void Dragon::Set_radius(int radius) { radius_ = radius; }
 
 int Dragon::Get_radius() { return radius_; }
 
+void Dragon::Create_projectile(Point pos, VectorMath vec_move) {
+  parent_scene_->AddObject(std::shared_ptr<GameObject>(new Projectile(
+      {pos.X + vec_move.get_int_X(), pos.Y + vec_move.get_int_Y()},
+      damage_projectile_, vec_move,speed_projectile_, this->parent_scene_)));
+}
+
 void Entity::Collide(AidKit& g) {
   hp_.set_value(hp_.get_value() + g.Get_hp_regen());
   parent_scene_->DelObject(g.Get_id());
@@ -330,3 +357,9 @@ void EntityWithProjoctile::Set_damage_projectile(int damage_projectile) {
 }
 
 int EntityWithProjoctile::Get_damage_projectile() { return damage_projectile_; }
+
+void EntityWithProjoctile::Set_speed_projectile(double speed_projectile) {
+  speed_projectile_ = speed_projectile;
+}
+
+double EntityWithProjoctile::Get_speed_projectile() { return speed_projectile_; }

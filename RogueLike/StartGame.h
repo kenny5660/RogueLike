@@ -1,5 +1,4 @@
 #pragma once
 #include <string>
-void ReadConfig(std::string path);
-
+#include <chrono>
 void StartGame();

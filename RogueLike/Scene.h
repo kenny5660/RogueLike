@@ -16,11 +16,14 @@ class Scene {
   void ChekColide();
   bool Get_is_game_over();
   void Set_is_game_over(bool is_game_over);
+  void Set_elapsed_time(double elapsed_time);
+  double Get_elapsed_time();
  protected:
   GameDatabase gameObjects_;
   int width_;
   int heght_;
   bool is_game_over_ = false;
+  double elapsed_time_ = 0;
 };
 
 class DungeonMap : public Scene {

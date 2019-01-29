@@ -77,8 +77,11 @@ class Entity : public GameObject {
   void Set_damage(int damage);
   Scene *Get_parent_scene();
   void Set_parent_scene(Scene *);
+  double Get_speed();
+  void Set_speed(double speed);
   virtual void dead();
   void Collide(AidKit &g) override;
+  void Update() override;
 
  protected:
   LimitedValue hp_;
@@ -86,12 +89,13 @@ class Entity : public GameObject {
   int damage_;
   Scene *parent_scene_;
   VectorMath cur_vec_move_ = {1, 0};
+  double speed_ = 2;
   void Move(VectorMath vector_move);
 };
 class Projectile : public Entity {
  public:
   Projectile() {}
-  Projectile(Point pos, int damage, VectorMath vec_move, Scene *parent_scene);
+  Projectile(Point pos, int damage, VectorMath vec_move,double speed, Scene *parent_scene);
   void Update() override;
   void Collide(GameObject &g) override;
   void Collide(Wall &g) override;
@@ -112,7 +116,7 @@ class Projectile : public Entity {
 class ProjectileKnight : public Projectile {
  public:
   ProjectileKnight() {}
-  ProjectileKnight(Point pos, int damage, VectorMath vec_move, Knight *kn);
+  ProjectileKnight(Point pos, int damage, VectorMath vec_move,double speed, Knight *kn);
   void Collide(Monster &g) override;
 
  private:
@@ -125,9 +129,11 @@ class EntityWithProjoctile {
  public:
   void Set_damage_projectile(int damage_projectile);
   int Get_damage_projectile();
-
+  void Set_speed_projectile(double speed_projectile);
+  double Get_speed_projectile();
  protected:
   int damage_projectile_ = 2;
+  double speed_projectile_;
 };
 
 class Dragon : public Monster, public EntityWithProjoctile {
@@ -142,11 +148,12 @@ class Dragon : public Monster, public EntityWithProjoctile {
   void Collide(Knight &k) override;
   void Set_radius(int radius);
   int Get_radius();
+  void Create_projectile(Point pos, VectorMath vec_move);
 
 
  private:
   int radius_ = 4;
-  int radius_counter = 0;
+  double radius_counter = 0;
   int cur_moves_i_ = 0;
   const VectorMath vector_moves[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 };
@@ -170,7 +177,6 @@ class Knight : public Entity, public EntityWithProjoctile {
   Knight() {}
   Knight(Point pos, char texture = 'K');
   Knight(const Knight &knight, Point pos, Scene *parent_scene);
-  void Update() override;
   void key_pressed(int key);
   void dead() override;
   void Collide(GameObject &g) override;
@@ -186,4 +192,5 @@ class Knight : public Entity, public EntityWithProjoctile {
   void PressedRight();
   void PressedLeft();
   void PressedSpace();
+  void PressedNothing();
 };

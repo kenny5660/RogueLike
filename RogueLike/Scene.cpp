@@ -32,6 +32,13 @@ void Scene::Set_is_game_over(bool is_game_over) {
   is_game_over_ = is_game_over;
 }
 
+void Scene::Set_elapsed_time(double elapsed_time) {
+  elapsed_time_ = elapsed_time;
+}
+
+double Scene::Get_elapsed_time() { return elapsed_time_; }
+
+
 void Scene::Draw() {
   auto vec_objects = gameObjects_.Data();
   for (auto it = vec_objects.begin(); it != vec_objects.end(); it++) {

@@ -11,7 +11,8 @@
             "value":10
         },
         "damage": 2,
-        "texture":"Z"
+        "texture":"Z",
+        "speed":1
     },
     "dragon": {
         "hp":{
@@ -26,8 +27,10 @@
         },
         "damage": 4,
         "projectile_damage": 2,
-        "radius":3,
-        "texture":"D"
+        "speed_projectile": 7,
+        "radius":4,
+        "texture":"D",
+        "speed":1
     },
     "knight": {
         "hp":{
@@ -42,7 +45,10 @@
         },
         "damage": 5,
         "projectile_damage": 3,
-        "texture":"K"
+        "speed_projectile": 6,
+        "texture":"K",
+        "speed":3
+        
     },
     "wall": {
         "texture":"#"

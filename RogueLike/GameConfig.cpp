@@ -10,6 +10,7 @@ void Entity_set_from_json(Entity& ent, rapidjson::Value& val) {
   ent.get_mp().set_value(val["mp"]["value"].GetInt());
   ent.Set_damage(val["damage"].GetInt());
   ent.Set_texture(val["texture"].GetString()[0]);
+  ent.Set_speed(val["speed"].GetDouble());
 }
 GameConfig::GameConfig(std::string path) {
   rapidjson::Document doc;
@@ -21,6 +22,9 @@ GameConfig::GameConfig(std::string path) {
   Entity_set_from_json(dragon, doc["dragon"]);
   dragon.Set_radius(doc["dragon"]["radius"].GetInt());
   dragon.Set_damage_projectile(doc["dragon"]["projectile_damage"].GetInt());
+  dragon.Set_speed_projectile(doc["dragon"]["speed_projectile"].GetDouble());
+  knight.Set_damage_projectile(doc["knight"]["projectile_damage"].GetInt());
+  knight.Set_speed_projectile(doc["knight"]["speed_projectile"].GetDouble());
   wall.Set_texture(doc["wall"]["texture"].GetString()[0]);
   aid_kit.Set_texture(doc["aid_kit"]["texture"].GetString()[0]);
   aid_kit.Set_hp_regen(doc["aid_kit"]["hp_regen"].GetInt());

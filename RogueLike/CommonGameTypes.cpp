@@ -9,7 +9,7 @@ Point::Point(const Point& pt) : X(pt.X), Y(pt.Y) {}
 int Point::get_int_X() const { return (int)X; }
 int Point::get_int_Y() const { return (int)Y; }
 bool Point::operator==(const Point& lhs) {
-  return this->X == lhs.X && this->Y == lhs.Y;
+  return (int)this->X == (int)lhs.X && (int)this->Y == (int)lhs.Y;
 }
 bool VectorMath::operator==(const VectorMath& lhs) {
   return this->X == lhs.X && this->Y == lhs.Y;
