@@ -53,6 +53,10 @@ void create_Zombie(DungeonMap& map, const Point& pos) {
   map.AddObject(std::shared_ptr<GameObject>(
       new Zombie(map.Get_game_config()->Get_zombie(), pos, &map)));
 }
+void create_dragon(DungeonMap& map, const Point& pos) {
+  map.AddObject(std::shared_ptr<GameObject>(
+      new Dragon(map.Get_game_config()->Get_dragon(), pos, &map)));
+}
 
 void set_spawn_knight(DungeonMap& map, const Point& pos) {
   map.Set_pos_spawn(pos);
@@ -62,7 +66,9 @@ const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
     {'#', &create_Wall},
     {'Z', &create_Zombie},
     {'K', &set_spawn_knight},
-    {'+', &create_aid_kit}};
+    {'+', &create_aid_kit}, 
+	{'D', &create_dragon},
+};
 
 DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
                        std::shared_ptr<GameConfig> game_config)

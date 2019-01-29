@@ -18,12 +18,17 @@ GameConfig::GameConfig(std::string path) {
   doc.Parse(config_str.c_str());
   Entity_set_from_json(zombie, doc["zombie"]);
   Entity_set_from_json(knight, doc["knight"]);
+  Entity_set_from_json(dragon, doc["dragon"]);
+  dragon.Set_radius(doc["dragon"]["radius"].GetInt());
+  dragon.Set_damage_projectile(doc["dragon"]["projectile_damage"].GetInt());
   wall.Set_texture(doc["wall"]["texture"].GetString()[0]);
   aid_kit.Set_texture(doc["aid_kit"]["texture"].GetString()[0]);
   aid_kit.Set_hp_regen(doc["aid_kit"]["hp_regen"].GetInt());
 }
-Zombie& GameConfig::Get_zombie() { return zombie; }
-Knight& GameConfig::Get_knight() { return knight; }
-Wall& GameConfig::Get_wall() { return wall; }
+const Zombie& GameConfig::Get_zombie() { return zombie; }
+const Knight& GameConfig::Get_knight() { return knight; }
+const Wall& GameConfig::Get_wall() { return wall; }
 
-AidKit& GameConfig::Get_aid_kit() { return aid_kit; }
+const AidKit& GameConfig::Get_aid_kit() { return aid_kit; }
+
+const Dragon& GameConfig::Get_dragon() { return dragon; }

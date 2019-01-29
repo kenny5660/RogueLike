@@ -89,11 +89,6 @@ void Knight::Collide(Monster& z) {
 }
 void Knight::Collide(Wall& z) { pos_ = old_pos_; }
 
-void Knight::Collide(AidKit& g) {
-  hp_.set_value(hp_.get_value() + g.Get_hp_regen());
-  parent_scene_->DelObject(g.Get_id());
-}
-
 int Knight::Get_points() { return points_; }
 
 void Knight::Set_points(int points) { points_ = points; }
@@ -148,11 +143,7 @@ void Zombie::Collide(Knight& k) {
     k.dead();
   }
 }
-void Zombie::Collide(AidKit& g) {
-  hp_.set_value(hp_.get_value() + g.Get_hp_regen());
-  parent_scene_->DelObject(g.Get_id());
-}
-void Zombie::Collide(Projectile& g) { g.Collide(*this); }
+
 void Zombie::Collide(Monster& z) {
   pos_ = old_pos_;
   random_set_vec_move();
@@ -271,3 +262,71 @@ void ProjectileKnight::Collide(Monster& g) {
     g.dead();
   }
 }
+
+Dragon::Dragon(Point pos, char texture) {
+  pos_ = pos;
+  texture_char_ = texture;
+}
+
+Dragon::Dragon(const Dragon& dragon, Point pos, Scene* parent_scene) {
+  parent_scene_ = parent_scene;
+  pos_ = pos;
+  texture_char_ = dragon.texture_char_;
+  hp_ = dragon.hp_;
+  mp_ = dragon.mp_;
+  damage_ = dragon.damage_;
+  damage_projectile_ = dragon.damage_projectile_;
+  radius_ = dragon.radius_;
+  //cur_moves_i_ = rand() % 4;
+}
+
+void Dragon::Update() {
+  if (radius_counter++ == radius_-1) {
+    cur_moves_i_++;
+    radius_counter = 0;
+  }
+  if (cur_moves_i_ >= 4) {
+    cur_moves_i_ = 0;
+  }
+  Move(vector_moves[cur_moves_i_]);
+}
+
+void Dragon::Collide(GameObject& g) { return g.Collide(*this); }
+
+void Dragon::Collide(Monster& z) {
+  pos_ = old_pos_;
+  radius_counter--;
+}
+
+void Dragon::Collide(Wall& w) { pos_ = old_pos_; }
+
+void Dragon::Collide(Knight& k) {
+  pos_ = old_pos_;
+  radius_counter--;
+  k.Set_pos(k.Get_old_pos());
+  auto result = fight(*this, k);
+  if (result.first) {
+    k.Set_points(k.Get_points() + 1);
+    dead();
+  }
+  if (result.second) {
+    k.dead();
+  }
+}
+
+void Dragon::Set_radius(int radius) { radius_ = radius; }
+
+int Dragon::Get_radius() { return radius_; }
+
+void Entity::Collide(AidKit& g) {
+  hp_.set_value(hp_.get_value() + g.Get_hp_regen());
+  parent_scene_->DelObject(g.Get_id());
+}
+
+void Monster::Collide(Projectile& g) { g.Collide(*this); }
+
+void EntityWithProjoctile::Set_damage_projectile(int damage_projectile) {
+  damage_projectile_ = damage_projectile;
+}
+
+int EntityWithProjoctile::Get_damage_projectile() { return damage_projectile_; }

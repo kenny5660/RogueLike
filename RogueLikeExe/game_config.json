@@ -13,6 +13,22 @@
         "damage": 2,
         "texture":"Z"
     },
+    "dragon": {
+        "hp":{
+            "max":15,
+            "min":0,
+            "value":15
+        },
+        "mp":{
+            "max":10,
+            "min":0,
+            "value":10
+        },
+        "damage": 4,
+        "projectile_damage": 2,
+        "radius":3,
+        "texture":"D"
+    },
     "knight": {
         "hp":{
             "max":20,
@@ -25,6 +41,7 @@
             "value":10
         },
         "damage": 5,
+        "projectile_damage": 3,
         "texture":"K"
     },
     "wall": {
