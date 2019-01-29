@@ -53,6 +53,8 @@ double Entity::Get_speed() { return speed_; }
 
 void Entity::Set_speed(double speed) { speed_ = speed; }
 
+void Entity::Set_cur_vec_move(VectorMath vec) { cur_vec_move_ = vec; }
+
 void Entity::dead() { parent_scene_->DelObject(id_); }
 
 void Entity::Move(VectorMath vector_move) {

@@ -17,11 +17,13 @@ class Scene {
   bool Get_is_game_over();
   void Set_is_game_over(bool is_game_over);
   void Set_elapsed_time(double elapsed_time);
+  int Get_width();
+  int Get_height();
   double Get_elapsed_time();
  protected:
   GameDatabase gameObjects_;
   int width_;
-  int heght_;
+  int height_;
   bool is_game_over_ = false;
   double elapsed_time_ = 0;
 };
@@ -33,7 +35,7 @@ class DungeonMap : public Scene {
   void SpawnKnight();
   void Set_pos_spawn(Point pos);
   Point Get_pos_sawn();
-  Knight& Get_Knight();
+  std::shared_ptr<Knight> Get_Knight();
   std::shared_ptr<GameConfig> Get_game_config();
  private:
   std::shared_ptr<Knight> kn_;

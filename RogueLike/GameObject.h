@@ -78,6 +78,7 @@ class Entity : public GameObject {
   void Set_parent_scene(Scene *);
   double Get_speed();
   void Set_speed(double speed);
+  void Set_cur_vec_move(VectorMath vec);
   virtual void dead();
   void Collide(AidKit &g) override;
   void Update() override;

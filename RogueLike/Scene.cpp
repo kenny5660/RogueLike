@@ -38,6 +38,10 @@ void Scene::Set_elapsed_time(double elapsed_time) {
   elapsed_time_ = elapsed_time;
 }
 
+int Scene::Get_width() { return width_; }
+
+int Scene::Get_height() { return height_; }
+
 double Scene::Get_elapsed_time() { return elapsed_time_; }
 
 void Scene::Draw() {
@@ -88,7 +92,7 @@ void DungeonMap::SpawnKnight() {
   kn_->Set_parent_scene(this);
   AddObject(kn_);
 }
-Knight& DungeonMap::Get_Knight() { return *kn_; }
+std::shared_ptr<Knight> DungeonMap::Get_Knight() { return kn_; }
 std::shared_ptr<GameConfig> DungeonMap::Get_game_config() {
   return game_config_;
 }
@@ -107,7 +111,7 @@ void DungeonMap::ParseFile(std::istream& textMap) {
       width_ = std::max(width_, i);
     }
 
-    heght_ = std::max(heght_, curY);
+    height_ = std::max(height_, curY);
     curY++;
   }
 }

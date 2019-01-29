@@ -29,7 +29,7 @@ void StartGame() {
     auto begin = std::chrono::steady_clock::now();
     keyDown = getch();
     clear();
-    map_1lvl->Get_Knight().key_pressed(keyDown);
+    map_1lvl->Get_Knight()->key_pressed(keyDown);
     map_1lvl->Update();
     map_1lvl->ChekColide();
     map_1lvl->Draw();

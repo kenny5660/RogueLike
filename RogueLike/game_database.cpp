@@ -23,6 +23,8 @@ void GameDatabase::Remove(ObjectId id) {
   }
 }
 
+int GameDatabase::Total() const { return data_base_.size(); }
+
 std::pair<std::shared_ptr<GameObject>, bool> GameDatabase::DataById(
     ObjectId id) const {
   auto it = data_base_.find(id);

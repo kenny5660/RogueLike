@@ -1,0 +1,60 @@
+{
+    "zombie": {
+        "hp":{
+            "max":7,
+            "min":0,
+            "value":7
+        },
+        "mp":{
+            "max":10,
+            "min":0,
+            "value":10
+        },
+        "damage": 2,
+        "texture":"Z",
+        "speed":1
+    },
+    "dragon": {
+        "hp":{
+            "max":15,
+            "min":0,
+            "value":15
+        },
+        "mp":{
+            "max":10,
+            "min":0,
+            "value":10
+        },
+        "damage": 4,
+        "projectile_damage": 2,
+        "speed_projectile": 7,
+        "radius":4,
+        "texture":"D",
+        "speed":1
+    },
+    "knight": {
+        "hp":{
+            "max":20,
+            "min":0,
+            "value":16
+        },
+        "mp":{
+            "max":10,
+            "min":0,
+            "value":10
+        },
+        "damage": 5,
+        "projectile_damage": 3,
+        "speed_projectile": 6,
+        "texture":"K",
+        "speed":3
+        
+    },
+    "wall": {
+        "texture":"#"
+    },
+    "aid_kit": {
+        "texture":"+",
+        "hp_regen": 5
+    }
+}

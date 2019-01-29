@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonGameTypesTest.cpp" />
+    <ClCompile Include="GameDataBaseTest.cpp" />
     <ClCompile Include="SceneTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

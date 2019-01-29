@@ -13,7 +13,7 @@ class GameDatabase {
   void Insert(std::shared_ptr<GameObject> game_object,bool is_static = false);
 
   void Remove(ObjectId id);
-
+  int Total() const;
   std::pair<std::shared_ptr<GameObject>, bool> DataById(ObjectId id) const;
   std::vector<std::shared_ptr<GameObject>> Data() const;
   std::vector<std::shared_ptr<GameObject>> Data_non_static()const;
