@@ -1,4 +1,5 @@
 #pragma once
+#include "GameObject.h"
 #include <functional>
 #include <map>
 #include <set>

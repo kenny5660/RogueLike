@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 
 #include "game_database.h"
 #include "GameConfig.h"
@@ -14,6 +13,7 @@ class Scene {
   void Update();
   void Draw();
   void ChekColide();
+  const GameDatabase& Get_gameObjects();
   bool Get_is_game_over();
   void Set_is_game_over(bool is_game_over);
   void Set_elapsed_time(double elapsed_time);

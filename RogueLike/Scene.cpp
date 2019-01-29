@@ -26,6 +26,8 @@ void Scene::ChekColide() {
   }
 }
 
+const GameDatabase& Scene::Get_gameObjects() { return gameObjects_; }
+
 bool Scene::Get_is_game_over() { return is_game_over_; }
 
 void Scene::Set_is_game_over(bool is_game_over) {
@@ -37,7 +39,6 @@ void Scene::Set_elapsed_time(double elapsed_time) {
 }
 
 double Scene::Get_elapsed_time() { return elapsed_time_; }
-
 
 void Scene::Draw() {
   auto vec_objects = gameObjects_.Data();
@@ -70,20 +71,17 @@ void set_spawn_knight(DungeonMap& map, const Point& pos) {
 }
 
 const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
-    {'#', &create_Wall},
-    {'Z', &create_Zombie},
-    {'K', &set_spawn_knight},
-    {'+', &create_aid_kit}, 
-	{'D', &create_dragon},
+    {'#', &create_Wall},    {'Z', &create_Zombie}, {'K', &set_spawn_knight},
+    {'+', &create_aid_kit}, {'D', &create_dragon},
 };
 
 DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
                        std::shared_ptr<GameConfig> game_config)
     : kn_(kn), game_config_(game_config) {
   ParseFile(textMap);
-  AddObject(std::shared_ptr<GameObject>(
-                new GuiPlayer({width_ + 10.0, 5}, this->kn_)),
-            true);
+  AddObject(
+      std::shared_ptr<GameObject>(new GuiPlayer({width_ + 10.0, 5}, this->kn_)),
+      true);
 }
 void DungeonMap::SpawnKnight() {
   kn_->Set_pos(pos_spawn_);

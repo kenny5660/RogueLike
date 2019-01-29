@@ -13,6 +13,9 @@ struct Point {
 struct VectorMath {
   double X;
   double Y;
+  VectorMath();
+  VectorMath(double _X, double _Y);
+  VectorMath(const VectorMath& pt);
   int get_int_X() const;
   int get_int_Y() const;
   bool operator==(const VectorMath& lhs);

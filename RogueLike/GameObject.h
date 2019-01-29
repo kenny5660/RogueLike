@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 using ObjectId = unsigned long long int;
 class GameObject;
 class Wall;

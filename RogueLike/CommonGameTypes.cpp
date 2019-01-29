@@ -14,11 +14,18 @@ bool Point::operator==(const Point& lhs) {
 bool VectorMath::operator==(const VectorMath& lhs) {
   return this->X == lhs.X && this->Y == lhs.Y;
 }
+VectorMath::VectorMath() : X(0), Y(0) {}
+VectorMath::VectorMath(double _X, double _Y) : X(_X), Y(_Y) {}
+VectorMath::VectorMath(const VectorMath& pt) : X(pt.X), Y(pt.Y) {}
 int VectorMath::get_int_X() const { return (int)X; }
 int VectorMath::get_int_Y() const { return (int)Y; }
 
 LimitedValue::LimitedValue(int value, int max, int min)
-    : value_(value), max_(max), min_(min) {}
+    : value_(value), max_(max), min_(min) {
+  set_max(max);
+  set_min(min);
+  set_value(value);
+}
 LimitedValue::LimitedValue(const LimitedValue& lv)
     : value_(lv.get_value()), max_(lv.get_max()), min_(lv.get_min()) {}
 

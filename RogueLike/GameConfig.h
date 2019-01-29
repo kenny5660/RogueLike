@@ -1,5 +1,5 @@
 #pragma once
-#include "pch.h"
+//#include "pch.h"
 class GameConfig;
 #include "GameObject.h"
 class GameConfig {
