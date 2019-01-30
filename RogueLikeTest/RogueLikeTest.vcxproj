@@ -100,6 +100,7 @@
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\Users\misha\YandexDisk\OneDrive\Projects\C++\RogueLike\PDcurses;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>pdcurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -161,7 +162,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonGameTypesTest.cpp" />
+    <ClCompile Include="GameConfigTest.cpp" />
     <ClCompile Include="GameDataBaseTest.cpp" />
+    <ClCompile Include="GameObjectTest.cpp" />
     <ClCompile Include="SceneTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

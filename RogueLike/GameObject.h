@@ -7,16 +7,19 @@ class Knight;
 class AidKit;
 class Monster;
 class Projectile;
+class Entity;
 #include "GameConfig.h"
 #include "Scene.h"
 #include "game_database.h"
 
-class GameObject {
+std::pair<bool, bool> fight(Entity &a, Entity &b);
+
+  class GameObject {
  public:
   GameObject();
-  virtual void Update() = 0;
+  virtual void Update(){};
   virtual void Draw();
-  virtual void Collide(GameObject &g) {}
+  virtual void Collide(GameObject &g) { return g.Collide(*this); }
   virtual void Collide(Wall &g) {}
   virtual void Collide(Knight &g) {}
   virtual void Collide(Monster &g) {}
@@ -41,7 +44,6 @@ class GuiPlayer : public GameObject {
   GuiPlayer() {}
   GuiPlayer(Point pos, std::shared_ptr<Knight> kn);
   void Draw() override;
-  void Update() override;
 
  private:
   std::shared_ptr<Knight> kn_;
@@ -53,7 +55,6 @@ class AidKit : public GameObject {
   AidKit(const AidKit &aid, Point pos);
   void Set_hp_regen(int hp_regen);
   int Get_hp_regen();
-  void Update() override;
   void Collide(GameObject &g) override;
 
  private:
@@ -62,9 +63,8 @@ class AidKit : public GameObject {
 class Wall : public GameObject {
  public:
   Wall() {}
-  Wall(Point pos);
+  Wall(Point pos, char texture = '#');
   Wall(const Wall &wall, Point pos);
-  void Update() override;
   void Collide(GameObject &g) override;
 };
 class Entity : public GameObject {
@@ -78,6 +78,7 @@ class Entity : public GameObject {
   void Set_parent_scene(Scene *);
   double Get_speed();
   void Set_speed(double speed);
+  VectorMath Get_cur_vector_move();
   void Set_cur_vec_move(VectorMath vec);
   virtual void dead();
   void Collide(AidKit &g) override;
@@ -96,16 +97,11 @@ class Projectile : public Entity {
  public:
   Projectile() {}
   Projectile(Point pos, int damage, VectorMath vec_move,double speed, Scene *parent_scene);
-  void Update() override;
   void Collide(GameObject &g) override;
   void Collide(Wall &g) override;
   void Collide(Monster &g) override;
   void Collide(Knight &g) override;
   void Collide(Projectile &g) override;
-  void Set_texture_left(char t);
-  void Set_texture_down(char t);
-  void Set_texture_right(char t);
-  void Set_texture_up(char t);
 
  private:
   char texture_left_ = '<';
@@ -163,7 +159,6 @@ class Zombie : public Monster {
   Zombie() {}
   Zombie(Point pos, char texture = 'Z');
   Zombie(const Zombie &zombie, Point pos, Scene *parent_scene);
-  void Update() override;
   void Collide(GameObject &g) override;
   void Collide(Monster &z) override;
   void Collide(Wall &w) override;

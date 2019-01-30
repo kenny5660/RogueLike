@@ -29,10 +29,10 @@ GameConfig::GameConfig(std::string path) {
   aid_kit.Set_texture(doc["aid_kit"]["texture"].GetString()[0]);
   aid_kit.Set_hp_regen(doc["aid_kit"]["hp_regen"].GetInt());
 }
-const Zombie& GameConfig::Get_zombie() { return zombie; }
-const Knight& GameConfig::Get_knight() { return knight; }
-const Wall& GameConfig::Get_wall() { return wall; }
+Zombie& GameConfig::Get_zombie() { return zombie; }
+Knight& GameConfig::Get_knight() { return knight; }
+Wall& GameConfig::Get_wall() { return wall; }
 
-const AidKit& GameConfig::Get_aid_kit() { return aid_kit; }
+AidKit& GameConfig::Get_aid_kit() { return aid_kit; }
 
-const Dragon& GameConfig::Get_dragon() { return dragon; }
+Dragon& GameConfig::Get_dragon() { return dragon; }
