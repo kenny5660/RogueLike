@@ -28,11 +28,9 @@ void Scene::ChekColide() {
 
 const GameDatabase& Scene::Get_gameObjects() { return gameObjects_; }
 
-bool Scene::Get_is_game_over() { return is_game_over_; }
+GameResult Scene::Get_game_result() { return game_result_; }
 
-void Scene::Set_is_game_over(bool is_game_over) {
-  is_game_over_ = is_game_over;
-}
+void Scene::Set_game_result(GameResult game_over) { game_result_ = game_over; }
 
 void Scene::Set_elapsed_time(double elapsed_time) {
   elapsed_time_ = elapsed_time;
@@ -71,33 +69,50 @@ void create_dragon(DungeonMap& map, const Point& pos) {
 }
 
 void set_spawn_knight(DungeonMap& map, const Point& pos) {
-  map.Set_pos_spawn(pos);
+  map.Set_pos_spawn_knight(pos);
+}
+void set_spawn_princess(DungeonMap& map, const Point& pos) {
+  map.Set_pos_spawn_princess(pos);
 }
 
 const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
     {'#', &create_Wall},    {'Z', &create_Zombie}, {'K', &set_spawn_knight},
-    {'+', &create_aid_kit}, {'D', &create_dragon},
-};
+    {'+', &create_aid_kit}, {'D', &create_dragon}, {'P', &set_spawn_princess}};
 
 DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
                        std::shared_ptr<GameConfig> game_config)
     : kn_(kn), game_config_(game_config) {
+  const double offset_x = 10;
+  const double offset_y = 5;
   ParseFile(textMap);
-  AddObject(
-      std::shared_ptr<GameObject>(new GuiPlayer({width_ + 10.0, 5}, this->kn_)),
-      true);
+  AddObject(std::shared_ptr<GameObject>(
+                new GuiPlayer({width_ + offset_x, offset_y}, this->kn_)),
+            true);
+  SpawnPrincess();
 }
 void DungeonMap::SpawnKnight() {
-  kn_->Set_pos(pos_spawn_);
+  kn_->Set_pos(pos_spawn_knight_);
   kn_->Set_parent_scene(this);
   AddObject(kn_);
+}
+void DungeonMap::SpawnPrincess() {
+  pr_ = std::shared_ptr<Princess>(new Princess(Point(-1, -1), nullptr));
+  pr_->Set_pos(pos_spawn_princess_);
+  pr_->Set_parent_scene(this);
+  AddObject(pr_);
 }
 std::shared_ptr<Knight> DungeonMap::Get_Knight() { return kn_; }
 std::shared_ptr<GameConfig> DungeonMap::Get_game_config() {
   return game_config_;
 }
-void DungeonMap::Set_pos_spawn(Point pos) { pos_spawn_ = pos; }
-Point DungeonMap::Get_pos_sawn() { return pos_spawn_; }
+void DungeonMap::Set_pos_spawn_knight(Point pos) { pos_spawn_knight_ = pos; }
+Point DungeonMap::Get_pos_sawn_knight() { return pos_spawn_knight_; }
+
+void DungeonMap::Set_pos_spawn_princess(Point pos) {
+  pos_spawn_princess_ = pos;
+}
+
+Point DungeonMap::Get_pos_sawn_princess() { return pos_spawn_princess_; }
 
 void DungeonMap::ParseFile(std::istream& textMap) {
   int curY = 0;

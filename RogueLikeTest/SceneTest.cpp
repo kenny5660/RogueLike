@@ -57,8 +57,8 @@ TEST_CLASS(SceneTest){
       }
 	  TEST_METHOD(Get_and_set_is_game_over_test) {
 		Scene sc;
-        sc.Set_is_game_over(true); 
-		Assert::AreEqual(sc.Get_is_game_over(), true);
+            sc.Set_game_result(GAME_RESULT_WIN); 
+		Assert::AreEqual(sc.Get_game_result() == GAME_RESULT_WIN,true);
       }
 	  TEST_METHOD(Get_and_set_elapsed_time) {
 		Scene sc;
@@ -96,10 +96,10 @@ TEST_CLASS(DungeonMapTest){
         DungeonMap sc(inputMap, kn, game_config);
         sc.Set_elapsed_time(1);
         kn->Set_parent_scene(&sc);
-        sc.Set_pos_spawn({3,5});
+        sc.Set_pos_spawn_knight({3,5});
         sc.SpawnKnight();
-        Assert::AreEqual(sc.Get_pos_sawn().get_int_X(), kn->Get_pos().get_int_X());
-		Assert::AreEqual(sc.Get_pos_sawn().get_int_Y(), kn->Get_pos().get_int_Y());
+        Assert::AreEqual(sc.Get_pos_sawn_knight().get_int_X(), kn->Get_pos().get_int_X());
+		Assert::AreEqual(sc.Get_pos_sawn_knight().get_int_Y(), kn->Get_pos().get_int_Y());
         Assert::AreEqual(sc.Get_gameObjects().Total(), 47);
       }
 	  TEST_METHOD(Get_game_config_test){

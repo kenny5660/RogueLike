@@ -6,7 +6,7 @@ std::pair<bool, bool> fight(Entity& a, Entity& b) {
   b.get_hp().set_value(b.get_hp().get_value() - a.Get_damage());
   bool is_a_dead = a.get_hp().get_value() <= a.get_hp().get_min();
   bool is_b_dead = b.get_hp().get_value() <= b.get_hp().get_min();
-  return std::make_pair(is_a_dead, is_b_dead);
+  return {is_a_dead, is_b_dead};
 }
 GameObject::GameObject() {}
 
@@ -104,12 +104,7 @@ int Knight::Get_points() { return points_; }
 void Knight::Set_points(int points) { points_ = points; }
 
 void Knight::key_pressed(int key) {
-  const std::map<int, void (Knight::*)()> key_map = {
-      {KEY_UP, &Knight::PressedUp},
-      {KEY_DOWN, &Knight::PressedDown},
-      {KEY_LEFT, &Knight::PressedLeft},
-      {KEY_RIGHT, &Knight::PressedRight},
-      {' ', &Knight::PressedSpace}};
+
   auto it = key_map.find(key);
   if (it != key_map.end()) {
     (this->*(it->second))();
@@ -117,8 +112,8 @@ void Knight::key_pressed(int key) {
     // PressedNothing();
   }
 }
-void Knight::dead() { parent_scene_->Set_is_game_over(true); }
-//void Knight::PressedNothing() { cur_vec_move_ = {0, 0}; }
+void Knight::dead() { parent_scene_->Set_game_result(GAME_RESULT_LOSE); }
+// void Knight::PressedNothing() { cur_vec_move_ = {0, 0}; }
 void Knight::PressedUp() { cur_vec_move_ = {0, -1}; }
 void Knight::PressedDown() { cur_vec_move_ = {0, 1}; }
 void Knight::PressedLeft() { cur_vec_move_ = {-1, 0}; }
@@ -159,7 +154,7 @@ void Zombie::Collide(Knight& k) {
   }
 }
 
-void Zombie::Collide(Monster& z) {
+void Zombie::Collide(Monster& m) {
   pos_ = old_pos_;
   random_set_vec_move();
 }
@@ -210,7 +205,6 @@ void GuiPlayer::Draw() {
   ss.str(std::string());
 }
 
-
 Projectile::Projectile(Point pos, int damage, VectorMath vec_move, double speed,
                        Scene* parent_scene) {
   pos_ = pos;
@@ -254,7 +248,6 @@ void Projectile::Collide(Projectile& g) {
   g.dead();
   dead();
 }
-
 
 ProjectileKnight::ProjectileKnight(Point pos, int damage, VectorMath vec_move,
                                    double speed, Knight* kn)
@@ -308,7 +301,7 @@ void Dragon::Update() {
 
 void Dragon::Collide(GameObject& g) { return g.Collide(*this); }
 
-void Dragon::Collide(Monster& z) {
+void Dragon::Collide(Monster& m) {
   pos_ = old_pos_;
   radius_counter--;
 }
@@ -358,4 +351,18 @@ void EntityWithProjoctile::Set_speed_projectile(double speed_projectile) {
 
 double EntityWithProjoctile::Get_speed_projectile() {
   return speed_projectile_;
+}
+
+Princess::Princess(Point pos, Scene* parent_scene, char texture) {
+  pos_ = pos;
+  parent_scene_ = parent_scene;
+  texture_char_ = texture;
+  cur_vec_move_ = {0, 0};
+}
+
+
+void Princess::Collide(GameObject& g) { return g.Collide(*this); }
+
+void Princess::Collide(Knight& k) {
+  parent_scene_->Set_game_result(GAME_RESULT_WIN);
 }

@@ -118,7 +118,7 @@ TEST_CLASS(KnightTest){
 		  kn->Collide(*zm2);
 	      Assert::AreEqual(kn->get_hp().get_value(), 0);
 		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm2->Get_id()).second, false);
-		  Assert::AreEqual(sc.Get_is_game_over(), true);
+		  Assert::AreEqual(sc.Get_game_result() ==  GAME_RESULT_LOSE,true);
       }
 	  TEST_METHOD(Key_pressed_test){
 		  Knight ideal_kn;
@@ -178,7 +178,7 @@ TEST_CLASS(KnightTest){
 		  zm2->Collide(*kn);
 	      Assert::AreEqual(kn->get_hp().get_value(), 0);
 		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm2->Get_id()).second, false);
-		  Assert::AreEqual(sc.Get_is_game_over(), true);
+		  Assert::AreEqual(sc.Get_game_result() == GAME_RESULT_LOSE,true);
       }
 	TEST_METHOD(Colide_wall_test){
 		  Zombie ideal_zm;
@@ -358,7 +358,7 @@ TEST_CLASS(KnightTest){
             sc.AddObject(tle);
             tle->Collide(*zm);
             Assert::AreEqual(sc.Get_gameObjects().Total(), 1);
-            Assert::AreEqual(sc.Get_is_game_over(), true);
+            Assert::IsTrue(sc.Get_game_result()  == GAME_RESULT_LOSE);
 		  }
   };
   TEST_CLASS(DragonTest) {
@@ -413,7 +413,7 @@ TEST_CLASS(KnightTest){
 		  zm2->Collide(*kn);
 	      Assert::AreEqual(kn->get_hp().get_value(), 0);
 		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm2->Get_id()).second, false);
-		  Assert::AreEqual(sc.Get_is_game_over(), true);
+		  Assert::AreEqual((int)sc.Get_game_result(), (int)GAME_RESULT_LOSE);
       }
 	TEST_METHOD(Colide_wall_test){
 		  Zombie ideal_zm;

@@ -45,8 +45,8 @@ std::vector<std::shared_ptr<GameObject>> GameDatabase::Data() const {
 std::vector<std::shared_ptr<GameObject>> GameDatabase::Data_non_static() const {
   std::vector<std::shared_ptr<GameObject>> out;
   for (auto it = data_base_.begin(); it != data_base_.end(); ++it) {
-    auto itDel = static_objects_.find((*it).first);
-    if (itDel == static_objects_.end()) {
+    auto itStatic = static_objects_.find((*it).first);
+    if (itStatic == static_objects_.end()) {
       out.push_back(it->second);
     }
   }

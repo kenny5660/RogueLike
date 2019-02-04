@@ -16,16 +16,17 @@ void Init_curses() {
 }
 void StartGame() {
   Init_curses();
-  int keyDown = '+';
+  int keyDown = ERR;
   std::ifstream inputMap("maps/1lvl.dmap");
   std::shared_ptr<GameConfig> game_config(new GameConfig("game_config.json"));
   std::shared_ptr<Knight> K_player(
       new Knight(game_config->Get_knight(), {-1, -1}, nullptr));
-  std::unique_ptr<DungeonMap> map_1lvl(
+    std::unique_ptr<DungeonMap> map_1lvl(
       new DungeonMap(inputMap, K_player, game_config));
   map_1lvl->SpawnKnight();
   map_1lvl->Draw();
-  while (keyDown != 'q' && !map_1lvl->Get_is_game_over()) {
+  while (keyDown != 'q' &&
+         map_1lvl->Get_game_result() == GAME_RESULT_NOT_OVER) {
     auto begin = std::chrono::steady_clock::now();
     keyDown = getch();
     clear();
@@ -40,5 +41,11 @@ void StartGame() {
   }
   endwin();
   inputMap.close();
-  std::cout << "Your points: " << K_player->Get_points() << std::endl;
+
+  const std::map<GameResult, std::string> game_result_text_map = {
+      {GAME_RESULT_NOT_OVER, ""},
+      {GAME_RESULT_WIN, "You safed the wonderful princess!"},
+      {GAME_RESULT_LOSE, "You dead!"}};
+  std::cout << game_result_text_map.at(map_1lvl->Get_game_result())
+            << " Your points: " << K_player->Get_points() << std::endl;
 }
