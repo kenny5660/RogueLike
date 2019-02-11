@@ -45,7 +45,7 @@ TEST_CLASS(EntityTest){
           sc.AddObject(kit);
           kit->Collide(*zm);
 		  Assert::AreEqual(zm->get_hp().get_value(),ideal_zm.get_hp().get_max());
-		  Assert::AreEqual(sc.Get_gameObjects().Total(), 1);
+		  Assert::AreEqual(sc.Get_game_objects().Total(), 1);
       }
 	  TEST_METHOD(Dead_test){
 		  Zombie ideal_zm;
@@ -57,7 +57,7 @@ TEST_CLASS(EntityTest){
           std::shared_ptr<Zombie> zm(new Zombie(ideal_zm, {0, 0}, &sc));
           sc.AddObject(zm);
           zm->dead();
-		  Assert::AreEqual(sc.Get_gameObjects().Total(), 0);
+		  Assert::AreEqual(sc.Get_game_objects().Total(), 0);
       }
 };
 
@@ -113,28 +113,28 @@ TEST_CLASS(KnightTest){
           sc.AddObject(zm2);
           kn->Collide(*zm);
 		  Assert::AreEqual(kn->get_hp().get_value(),1);
-		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm->Get_id()).second, false);
+		  Assert::AreEqual(sc.Get_game_objects().DataById(zm->Get_id()).second, false);
           Assert::AreEqual(kn->Get_points(), 1);
 		  kn->Collide(*zm2);
 	      Assert::AreEqual(kn->get_hp().get_value(), 0);
-		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm2->Get_id()).second, false);
-		  Assert::AreEqual(sc.Get_game_result() ==  GAME_RESULT_LOSE,true);
+		  Assert::AreEqual(sc.Get_game_objects().DataById(zm2->Get_id()).second, false);
+              Assert::AreEqual(sc.Get_game_result() == GameResult::LOSE, true);
       }
 	  TEST_METHOD(Key_pressed_test){
 		  Knight ideal_kn;
-          ideal_kn.key_pressed(KEY_UP);
+          ideal_kn.KeyPressed(KEY_UP);
           VectorMath vec(0,-1);
           Assert::AreEqual(ideal_kn.Get_cur_vector_move().get_int_X(),vec.get_int_X());
 	      Assert::AreEqual(ideal_kn.Get_cur_vector_move().get_int_Y(),vec.get_int_Y());
-		  ideal_kn.key_pressed(KEY_DOWN);
+		  ideal_kn.KeyPressed(KEY_DOWN);
           vec = {0,1};
           Assert::AreEqual(ideal_kn.Get_cur_vector_move().get_int_X(),vec.get_int_X());
 	      Assert::AreEqual(ideal_kn.Get_cur_vector_move().get_int_Y(),vec.get_int_Y());
-		  ideal_kn.key_pressed(KEY_RIGHT);
+		  ideal_kn.KeyPressed(KEY_RIGHT);
           vec = {1,0};
           Assert::AreEqual(ideal_kn.Get_cur_vector_move().get_int_X(),vec.get_int_X());
 	      Assert::AreEqual(ideal_kn.Get_cur_vector_move().get_int_Y(),vec.get_int_Y());
-		  ideal_kn.key_pressed(KEY_LEFT);
+		  ideal_kn.KeyPressed(KEY_LEFT);
           vec = {-1,0};
           Assert::AreEqual(ideal_kn.Get_cur_vector_move().get_int_X(),vec.get_int_X());
 	      Assert::AreEqual(ideal_kn.Get_cur_vector_move().get_int_Y(),vec.get_int_Y());
@@ -173,12 +173,12 @@ TEST_CLASS(KnightTest){
           sc.AddObject(zm2);
           zm->Collide(*kn);
 		  Assert::AreEqual(kn->get_hp().get_value(),1);
-		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm->Get_id()).second, false);
+		  Assert::AreEqual(sc.Get_game_objects().DataById(zm->Get_id()).second, false);
           Assert::AreEqual(kn->Get_points(), 1);
 		  zm2->Collide(*kn);
 	      Assert::AreEqual(kn->get_hp().get_value(), 0);
-		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm2->Get_id()).second, false);
-		  Assert::AreEqual(sc.Get_game_result() == GAME_RESULT_LOSE,true);
+		  Assert::AreEqual(sc.Get_game_objects().DataById(zm2->Get_id()).second, false);
+              Assert::AreEqual(sc.Get_game_result() == GameResult::LOSE, true);
       }
 	TEST_METHOD(Colide_wall_test){
 		  Zombie ideal_zm;
@@ -221,7 +221,7 @@ TEST_CLASS(KnightTest){
           }
   };
   TEST_CLASS(GuiPlayerTest) {public : TEST_METHOD(Draw_test){
-	      Init_curses();
+	      Init—urses();
 		  Point pos(1,2);
 		  Knight ideal_kn;
 		  ideal_kn.get_hp().set_max(7);
@@ -273,20 +273,20 @@ TEST_CLASS(KnightTest){
 		  Scene sc;
           std::shared_ptr<Knight> kn(new Knight(ideal_kn, {0, 0}, &sc));
 		  sc.AddObject(kn);
-          kn->key_pressed(KEY_UP);
-          kn->key_pressed(' ');
-		  Assert::AreEqual(sc.Get_gameObjects().Total(),2);
-          Assert::AreEqual(sc.Get_gameObjects().DataById(1).first->Get_texture(), '^');
+          kn->KeyPressed(KEY_UP);
+          kn->KeyPressed(' ');
+		  Assert::AreEqual(sc.Get_game_objects().Total(),2);
+          Assert::AreEqual(sc.Get_game_objects().DataById(1).first->Get_texture(), '^');
           sc.DelObject(1);
-		  kn->key_pressed(KEY_DOWN);
-          kn->key_pressed(' ');
-          Assert::AreEqual(sc.Get_gameObjects().DataById(2).first->Get_texture(), 'V');
-		  kn->key_pressed(KEY_RIGHT);
-          kn->key_pressed(' ');
-          Assert::AreEqual(sc.Get_gameObjects().DataById(3).first->Get_texture(), '>');
-		  kn->key_pressed(KEY_LEFT);
-          kn->key_pressed(' ');
-          Assert::AreEqual(sc.Get_gameObjects().DataById(4).first->Get_texture(), '<');
+		  kn->KeyPressed(KEY_DOWN);
+          kn->KeyPressed(' ');
+          Assert::AreEqual(sc.Get_game_objects().DataById(2).first->Get_texture(), 'V');
+		  kn->KeyPressed(KEY_RIGHT);
+          kn->KeyPressed(' ');
+          Assert::AreEqual(sc.Get_game_objects().DataById(3).first->Get_texture(), '>');
+		  kn->KeyPressed(KEY_LEFT);
+          kn->KeyPressed(' ');
+          Assert::AreEqual(sc.Get_game_objects().DataById(4).first->Get_texture(), '<');
           }
           TEST_METHOD(Collide_wall_test){
             Scene sc;
@@ -295,7 +295,7 @@ TEST_CLASS(KnightTest){
             sc.AddObject(wl);
             sc.AddObject(tle);
             tle->Collide(*wl);
-            Assert::AreEqual(sc.Get_gameObjects().Total(), 1);
+            Assert::AreEqual(sc.Get_game_objects().Total(), 1);
 		  }
           TEST_METHOD(Collide_tile_test) {
             Scene sc;
@@ -306,7 +306,7 @@ TEST_CLASS(KnightTest){
             sc.AddObject(tle2);
             sc.AddObject(tle);
             tle->Collide(*tle2);
-            Assert::AreEqual(sc.Get_gameObjects().Total(), 0);
+            Assert::AreEqual(sc.Get_game_objects().Total(), 0);
           }
 		   TEST_METHOD(Collide_monster_test){
             Scene sc;
@@ -320,7 +320,7 @@ TEST_CLASS(KnightTest){
             sc.AddObject(zm);
             sc.AddObject(tle);
             tle->Collide(*zm);
-            Assert::AreEqual(sc.Get_gameObjects().Total(), 0);
+            Assert::AreEqual(sc.Get_game_objects().Total(), 0);
 		  }
 		   TEST_METHOD(Collide_projectTileknight_monster_test){
             Scene sc;
@@ -342,7 +342,7 @@ TEST_CLASS(KnightTest){
             sc.AddObject(zm);
             sc.AddObject(tle);
             tle->Collide(*zm);
-            Assert::AreEqual(sc.Get_gameObjects().Total(), 1);
+            Assert::AreEqual(sc.Get_game_objects().Total(), 1);
             Assert::AreEqual(kn->Get_points(), 1);
 		  }
 		   TEST_METHOD(Collide_knight_test){
@@ -357,8 +357,8 @@ TEST_CLASS(KnightTest){
             sc.AddObject(zm);
             sc.AddObject(tle);
             tle->Collide(*zm);
-            Assert::AreEqual(sc.Get_gameObjects().Total(), 1);
-            Assert::IsTrue(sc.Get_game_result()  == GAME_RESULT_LOSE);
+            Assert::AreEqual(sc.Get_game_objects().Total(), 1);
+            Assert::IsTrue(sc.Get_game_result() == GameResult::LOSE);
 		  }
   };
   TEST_CLASS(DragonTest) {
@@ -384,7 +384,7 @@ TEST_CLASS(KnightTest){
           std::shared_ptr<Dragon> d(new Dragon(ideal_d, zm_pos, &sc));
           sc.AddObject(d);
           d->Create_projectile({5,8},{0,1});
-          Assert::AreEqual(sc.Get_gameObjects().Total(), 2);
+          Assert::AreEqual(sc.Get_game_objects().Total(), 2);
 		}
 		  TEST_METHOD(Colide_knight_test){
 		  Dragon ideal_d;
@@ -408,12 +408,12 @@ TEST_CLASS(KnightTest){
           sc.AddObject(zm2);
           zm->Collide(*kn);
 		  Assert::AreEqual(kn->get_hp().get_value(),1);
-		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm->Get_id()).second, false);
+		  Assert::AreEqual(sc.Get_game_objects().DataById(zm->Get_id()).second, false);
           Assert::AreEqual(kn->Get_points(), 1);
 		  zm2->Collide(*kn);
 	      Assert::AreEqual(kn->get_hp().get_value(), 0);
-		  Assert::AreEqual(sc.Get_gameObjects().DataById(zm2->Get_id()).second, false);
-		  Assert::AreEqual((int)sc.Get_game_result(), (int)GAME_RESULT_LOSE);
+		  Assert::AreEqual(sc.Get_game_objects().DataById(zm2->Get_id()).second, false);
+              Assert::AreEqual((int)sc.Get_game_result(), (int)GameResult::LOSE);
       }
 	TEST_METHOD(Colide_wall_test){
 		  Zombie ideal_zm;

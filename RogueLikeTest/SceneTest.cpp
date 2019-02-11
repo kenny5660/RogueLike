@@ -15,8 +15,8 @@ TEST_CLASS(SceneTest){
 		char texture = 'F';
         std::shared_ptr<Knight> kn(new Knight(pos, texture));
         sc.AddObject(kn);
-        Assert::AreEqual(sc.Get_gameObjects().DataById(kn->Get_id()).second, true);
-		Assert::AreEqual(sc.Get_gameObjects().DataById(kn->Get_id()).first->Get_texture(), texture);
+        Assert::AreEqual(sc.Get_game_objects().DataById(kn->Get_id()).second, true);
+		Assert::AreEqual(sc.Get_game_objects().DataById(kn->Get_id()).first->Get_texture(), texture);
       }
 	  TEST_METHOD(DelObject_test){
 		Scene sc;
@@ -25,7 +25,7 @@ TEST_CLASS(SceneTest){
         std::shared_ptr<Knight> kn(new Knight(pos, texture));
         sc.AddObject(kn);
         sc.DelObject(kn->Get_id());
-        Assert::AreEqual(sc.Get_gameObjects().DataById(kn->Get_id()).second, false);
+        Assert::AreEqual(sc.Get_game_objects().DataById(kn->Get_id()).second, false);
       }
 	  TEST_METHOD(Update_test){
 		Scene sc;
@@ -37,10 +37,10 @@ TEST_CLASS(SceneTest){
         kn->Set_parent_scene(&sc);
         sc.AddObject(kn);
 		sc.Update();
-        Assert::AreNotEqual(sc.Get_gameObjects().DataById(kn->Get_id()).first->Get_pos().X, pos.X);
+        Assert::AreNotEqual(sc.Get_game_objects().DataById(kn->Get_id()).first->Get_pos().X, pos.X);
       }
 	  TEST_METHOD(Draw_test){
-        Init_curses();
+        InitÑurses();
 		Scene sc;
         sc.Set_elapsed_time(1);
 		Point pos = {3,3};
@@ -57,8 +57,8 @@ TEST_CLASS(SceneTest){
       }
 	  TEST_METHOD(Get_and_set_is_game_over_test) {
 		Scene sc;
-            sc.Set_game_result(GAME_RESULT_WIN); 
-		Assert::AreEqual(sc.Get_game_result() == GAME_RESULT_WIN,true);
+            sc.Set_game_result(GameResult::WIN); 
+		Assert::AreEqual(sc.Get_game_result() == GameResult::WIN, true);
       }
 	  TEST_METHOD(Get_and_set_elapsed_time) {
 		Scene sc;
@@ -83,7 +83,7 @@ TEST_CLASS(DungeonMapTest){
         kn->Set_parent_scene(&sc);
         Assert::AreEqual(sc.Get_width(), 30);
         Assert::AreEqual(sc.Get_height(), 12);
-        Assert::AreEqual(sc.Get_gameObjects().Total(),46);
+        Assert::AreEqual(sc.Get_game_objects().Total(),46);
       }
 	  TEST_METHOD(Spawn_test){
         Point pos = {3, 3};
@@ -100,7 +100,7 @@ TEST_CLASS(DungeonMapTest){
         sc.SpawnKnight();
         Assert::AreEqual(sc.Get_pos_sawn_knight().get_int_X(), kn->Get_pos().get_int_X());
 		Assert::AreEqual(sc.Get_pos_sawn_knight().get_int_Y(), kn->Get_pos().get_int_Y());
-        Assert::AreEqual(sc.Get_gameObjects().Total(), 47);
+        Assert::AreEqual(sc.Get_game_objects().Total(), 47);
       }
 	  TEST_METHOD(Get_game_config_test){
         Point pos = {3, 3};

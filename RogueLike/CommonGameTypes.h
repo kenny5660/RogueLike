@@ -1,5 +1,7 @@
 #pragma once
 #include <limits>
+
+enum class ControlKey { UP, DOWN, LEFT,RIGHT, FIRE, EXIT};
 struct Point {
   Point();
   Point(double _X, double _Y);

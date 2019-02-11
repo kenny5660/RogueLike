@@ -1,37 +1,38 @@
 #pragma once
 
-#include "game_database.h"
 #include "GameConfig.h"
+#include "game_database.h"
 const int max_scene_width = 500;
 const int max_scene_heght = 500;
-enum GameResult { GAME_RESULT_NOT_OVER, GAME_RESULT_WIN, GAME_RESULT_LOSE };
+enum class GameResult { NOT_OVER, WIN, LOSE };
 class Scene {
  public:
-  Scene();
-  void AddObject(std::shared_ptr<GameObject> game_object,bool is_static = false);
+  explicit Scene();
+  void AddObject(std::shared_ptr<GameObject> game_object,
+                 bool is_static = false);
   void DelObject(ObjectId id);
   void Update();
   void Draw();
-  void ChekColide();
-  const GameDatabase& Get_gameObjects();
+  void CheckCollide();
+  const GameDatabase& Get_game_objects();
   GameResult Get_game_result();
   void Set_game_result(GameResult game_over);
   void Set_elapsed_time(double elapsed_time);
   int Get_width();
   int Get_height();
   double Get_elapsed_time();
+
  protected:
-  GameDatabase gameObjects_;
+  GameDatabase game_objects_;
   int width_;
   int height_;
-  GameResult game_result_ = GAME_RESULT_NOT_OVER;
+  GameResult game_result_ = GameResult::NOT_OVER;
   double elapsed_time_ = 0;
 };
 
 class DungeonMap : public Scene {
  public:
-  DungeonMap(
-      std::istream& textMap, std::shared_ptr<Knight> kn,
+  DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
              std::shared_ptr<GameConfig> game_config);
   void SpawnKnight();
   void SpawnPrincess();
@@ -41,6 +42,7 @@ class DungeonMap : public Scene {
   Point Get_pos_sawn_princess();
   std::shared_ptr<Knight> Get_Knight();
   std::shared_ptr<GameConfig> Get_game_config();
+
  private:
   std::shared_ptr<Princess> pr_;
   std::shared_ptr<Knight> kn_;

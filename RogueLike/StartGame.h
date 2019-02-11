@@ -2,4 +2,4 @@
 #include <string>
 #include <chrono>
 void StartGame();
-void Init_curses();
+void Init—urses();

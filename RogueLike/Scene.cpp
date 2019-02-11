@@ -2,31 +2,30 @@
 
 Scene::Scene() {}
 void Scene::AddObject(std::shared_ptr<GameObject> game_object, bool is_static) {
-  gameObjects_.Insert(game_object, is_static);
+  game_objects_.Insert(game_object, is_static);
 }
-void Scene::DelObject(ObjectId id) { gameObjects_.Remove(id); }
+void Scene::DelObject(ObjectId id) { game_objects_.Remove(id); }
 void Scene::Update() {
-  auto vec_objects = gameObjects_.Data();
+  auto vec_objects = game_objects_.Data();
   for (auto it = vec_objects.begin(); it != vec_objects.end(); it++) {
     (**it).Update();
   }
 }
-void Scene::ChekColide() {
-  auto vec_objects = gameObjects_.Data();
-  auto active_objects = gameObjects_.Data_non_static();
-  for (auto it = vec_objects.begin(); it != vec_objects.end(); it++) {
-    for (auto it_col = active_objects.begin(); it_col != active_objects.end();
-         it_col++) {
-      if ((*it)->Get_id() != (*it_col)->Get_id()) {
-        if ((*it)->Get_pos() == (*it_col)->Get_pos()) {
-          (*it)->Collide(**it_col);
+void Scene::CheckCollide() {
+  auto vec_objects = game_objects_.Data();
+  auto active_objects = game_objects_.Data_non_static();
+  for (auto &it : vec_objects) {
+    for (auto &it_col : active_objects){
+      if (it != it_col) {
+        if (it->Get_pos() == it_col->Get_pos()) {
+          it->Collide(*it_col);
         }
       }
     }
   }
 }
 
-const GameDatabase& Scene::Get_gameObjects() { return gameObjects_; }
+const GameDatabase& Scene::Get_game_objects() { return game_objects_; }
 
 GameResult Scene::Get_game_result() { return game_result_; }
 
@@ -43,7 +42,7 @@ int Scene::Get_height() { return height_; }
 double Scene::Get_elapsed_time() { return elapsed_time_; }
 
 void Scene::Draw() {
-  auto vec_objects = gameObjects_.Data();
+  auto vec_objects = game_objects_.Data();
   for (auto it = vec_objects.begin(); it != vec_objects.end(); it++) {
     (**it).Draw();
   }
