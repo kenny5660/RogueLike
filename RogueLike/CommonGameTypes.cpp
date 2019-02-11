@@ -11,14 +11,16 @@ int Point::get_int_Y() const { return (int)Y; }
 bool Point::operator==(const Point& lhs) {
   return (int)this->X == (int)lhs.X && (int)this->Y == (int)lhs.Y;
 }
-bool VectorMath::operator==(const VectorMath& lhs) {
-  return this->X == lhs.X && this->Y == lhs.Y;
+
+bool Point::operator<(const Point& pt) const {
+  if (pt.X == X) {
+    return pt.Y < Y; 
+  }
+	return pt.X < X;
 }
-VectorMath::VectorMath() : X(0), Y(0) {}
-VectorMath::VectorMath(double _X, double _Y) : X(_X), Y(_Y) {}
-VectorMath::VectorMath(const VectorMath& pt) : X(pt.X), Y(pt.Y) {}
-int VectorMath::get_int_X() const { return (int)X; }
-int VectorMath::get_int_Y() const { return (int)Y; }
+
+Point Point::operator+(const Point& pt) { return Point(pt.X + X, pt.Y + Y); }
+
 
 LimitedValue::LimitedValue(int value, int max, int min)
     : value_(value), max_(max), min_(min) {

@@ -42,10 +42,11 @@ class DungeonMap : public Scene {
   Point Get_pos_sawn_princess();
   std::shared_ptr<Knight> Get_Knight();
   std::shared_ptr<GameConfig> Get_game_config();
-
+  std::shared_ptr<Scene> Get_scene_shared_ptr();
  private:
   std::shared_ptr<Princess> pr_;
   std::shared_ptr<Knight> kn_;
+  std::shared_ptr<Scene> scene_shared_ptr_;
   Point pos_spawn_knight_;
   Point pos_spawn_princess_;
   void ParseFile(std::istream& textMap);

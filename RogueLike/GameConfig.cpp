@@ -41,11 +41,11 @@ GameConfig::GameConfig(std::string path) {
     }
   }
 }
-Zombie& GameConfig::Get_zombie() { return zombie_; }
-Knight& GameConfig::Get_knight() { return knight_; }
-Wall& GameConfig::Get_wall() { return wall_; }
-AidKit& GameConfig::Get_aid_kit() { return aid_kit_; }
-Dragon& GameConfig::Get_dragon() { return dragon_; }
+const Zombie& GameConfig::Get_zombie() { return zombie_; }
+const Knight& GameConfig::Get_knight() { return knight_; }
+const Wall& GameConfig::Get_wall() { return wall_; }
+const AidKit& GameConfig::Get_aid_kit() { return aid_kit_; }
+const Dragon& GameConfig::Get_dragon() { return dragon_; }
 
 const std::map<GameResult, std::string>&
 GameConfig::Get_game_result_text_map() {

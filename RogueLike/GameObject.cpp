@@ -39,31 +39,33 @@ void Wall::Collide(GameObject& g) { return g.Collide(*this); }
 
 Entity::Entity() {}
 Entity::Entity(Point pos, char texture, LimitedValue hp, LimitedValue mp,
-               int damage,
-               Scene* parent_scene, VectorMath cur_vec_move, double speed)
+               int damage, std::shared_ptr<Scene> parent_scene,
+               Point cur_vec_move, double speed)
     :GameObject(pos,texture), hp_(hp), mp_(mp), damage_(damage), parent_scene_(parent_scene),cur_vec_move_(cur_vec_move),speed_(speed) {}
-const LimitedValue& Entity::get_hp() { return hp_; }
-const LimitedValue& Entity::get_mp() { return mp_; }
+const LimitedValue& Entity::get_hp()const  { return hp_; }
+const LimitedValue& Entity::get_mp()const  { return mp_; }
 void Entity::set_hp(const LimitedValue& hp) { hp_ = hp; }
 void Entity::set_mp(const LimitedValue& mp) { mp_ = mp; }
 void Entity::Update() { Move(cur_vec_move_); }
-int Entity::Get_damage() { return damage_; }
+int Entity::Get_damage() const { return damage_; }
 void Entity::Set_damage(int damage) { damage_ = damage; }
 
-Scene* Entity::Get_parent_scene() { return parent_scene_; }
+std::shared_ptr<Scene> Entity::Get_parent_scene() { return parent_scene_; }
 
-void Entity::Set_parent_scene(Scene* scene) { parent_scene_ = scene; }
+void Entity::Set_parent_scene(std::shared_ptr<Scene> scene) {
+  parent_scene_ = scene;
+}
 
-double Entity::Get_speed() { return speed_; }
+double Entity::Get_speed() const { return speed_; }
 
 void Entity::Set_speed(double speed) { speed_ = speed; }
 
-void Entity::Set_cur_vec_move(VectorMath vec) { cur_vec_move_ = vec; }
-VectorMath Entity::Get_cur_vector_move() { return cur_vec_move_; }
+void Entity::Set_cur_vec_move(Point vec) { cur_vec_move_ = vec; }
+Point Entity::Get_cur_vector_move() { return cur_vec_move_; }
 
 void Entity::dead() { parent_scene_->DelObject(id_); }
 
-void Entity::Move(VectorMath vector_move) {
+void Entity::Move(Point vector_move) {
   cur_vec_move_ = vector_move;
   Point newPos(
       pos_.X + vector_move.X * speed_ * parent_scene_->Get_elapsed_time(),
@@ -74,7 +76,8 @@ void Entity::Move(VectorMath vector_move) {
   pos_.Y = newPos.Y;
 }
 
-Knight::Knight(const Knight& knight, Point pos, Scene* parent_scene,
+Knight::Knight(const Knight& knight, Point pos,
+               std::shared_ptr<Scene> parent_scene,
                std::map<std::string, int> control_keys_)
     : Knight(knight, pos, parent_scene) {
   key_map_ = {{control_keys_["up"], &Knight::PressedUp},
@@ -83,7 +86,8 @@ Knight::Knight(const Knight& knight, Point pos, Scene* parent_scene,
               {control_keys_["right"], &Knight::PressedRight},
               {control_keys_["fire"], &Knight::PressedSpace}};
 }
-Knight::Knight(const Knight& knight, Point pos, Scene* parent_scene)
+Knight::Knight(const Knight& knight, Point pos,
+               std::shared_ptr<Scene> parent_scene)
     : Entity(pos, knight.texture_char_, knight.hp_, knight.mp_, knight.damage_,
              parent_scene, knight.cur_vec_move_, knight.speed_),EntityWithProjoctile(knight.damage_projectile_,knight.speed_projectile_) {
 }
@@ -123,12 +127,13 @@ void Knight::PressedLeft() { cur_vec_move_ = {-1, 0}; }
 void Knight::PressedRight() { cur_vec_move_ = {1, 0}; }
 void Knight::PressedSpace() {
   parent_scene_->AddObject(std::shared_ptr<GameObject>(new ProjectileKnight(
-      {pos_.X + cur_vec_move_.get_int_X(), pos_.Y + cur_vec_move_.get_int_Y()},
+      pos_+cur_vec_move_,
       damage_projectile_, cur_vec_move_, speed_projectile_, this)));
 }
 
 
-Zombie::Zombie(const Zombie& zombie, Point pos, Scene* parent_scene)
+Zombie::Zombie(const Zombie& zombie, Point pos,
+               std::shared_ptr<Scene> parent_scene)
     : Monster(pos, zombie.texture_char_, zombie.hp_, zombie.mp_, zombie.damage_,
               parent_scene, zombie.cur_vec_move_, zombie.speed_) {
   random_set_vec_move();
@@ -155,7 +160,7 @@ void Zombie::Collide(Wall& w) {
   random_set_vec_move();
 };
 void Zombie::random_set_vec_move() {
-  const VectorMath vec_moves[4] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+  const Point vec_moves[4] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
   int new_rand = rand() % 4;
   cur_vec_move_ = vec_moves[new_rand];
 }
@@ -169,7 +174,7 @@ AidKit::AidKit(const AidKit& aid, Point pos)
 
 void AidKit::Set_hp_regen(int hp_regen) { hp_regen_ = hp_regen; }
 
-int AidKit::Get_hp_regen() { return hp_regen_; }
+int AidKit::Get_hp_regen() const { return hp_regen_; }
 
 void AidKit::Collide(GameObject& g) { return g.Collide(*this); }
 
@@ -190,20 +195,17 @@ void GuiPlayer::Draw() {
   ss.str(std::string());
 }
 
-Projectile::Projectile(Point pos, int damage, VectorMath vec_move, double speed,
-                       Scene* parent_scene):Entity(pos,' ',LimitedValue(0),LimitedValue(0),damage,parent_scene,vec_move,speed) {
-  if (cur_vec_move_ == VectorMath{0, 1}) {
-    texture_char_ = texture_down_;
-  }
-  if (cur_vec_move_ == VectorMath{0, -1}) {
-    texture_char_ = texture_up_;
-  }
-  if (cur_vec_move_ == VectorMath{1, 0}) {
-    texture_char_ = texture_right_;
-  }
-  if (cur_vec_move_ == VectorMath{-1, 0}) {
-    texture_char_ = texture_left_;
-  }
+Projectile::Projectile(Point pos, int damage, Point vec_move, double speed,
+                       std::shared_ptr<Scene> parent_scene)
+    : Entity(pos, ' ', LimitedValue(0), LimitedValue(0), damage, parent_scene,
+             vec_move, speed) {
+  const std::map<Point, char> texture_map = {
+	  {{0,1},texture_down_},
+      {{0, -1}, texture_up_},
+      {{1, 0}, texture_right_},
+      {{-1, 0}, texture_left_},
+  };
+  texture_char_ = texture_map.at(cur_vec_move_);
 }
 void Projectile::Collide(GameObject& g) { return g.Collide(*this); }
 
@@ -229,7 +231,7 @@ void Projectile::Collide(Projectile& g) {
   dead();
 }
 
-ProjectileKnight::ProjectileKnight(Point pos, int damage, VectorMath vec_move,
+ProjectileKnight::ProjectileKnight(Point pos, int damage, Point vec_move,
                                    double speed, Knight* kn)
     : Projectile(pos, damage, vec_move, speed, kn->Get_parent_scene()),
       kn_(kn) {}
@@ -244,7 +246,8 @@ void ProjectileKnight::Collide(Monster& g) {
 }
 
 
-Dragon::Dragon(const Dragon& dragon, Point pos, Scene* parent_scene)
+Dragon::Dragon(const Dragon& dragon, Point pos,
+               std::shared_ptr<Scene> parent_scene)
     : Monster(pos, dragon.texture_char_, dragon.hp_, dragon.mp_, dragon.damage_,
              parent_scene, dragon.cur_vec_move_, dragon.speed_),
       EntityWithProjoctile(dragon.damage_projectile_,
@@ -256,11 +259,8 @@ Dragon::Dragon(const Dragon& dragon, Point pos, Scene* parent_scene)
 void Dragon::Update() {
   radius_counter += speed_ * parent_scene_->Get_elapsed_time();
   if (radius_counter >= radius_ - 1) {
-    cur_moves_i_++;
+    cur_moves_i_ = (cur_moves_i_ +1)%4 ;
     radius_counter = 0;
-    if (cur_moves_i_ >= 4) {
-      cur_moves_i_ = 0;
-    }
     int projectile_vector = rand() % 3;
     if (cur_moves_i_ == projectile_vector) projectile_vector++;
     Create_projectile(pos_, vector_moves[projectile_vector]);
@@ -296,7 +296,7 @@ void Dragon::Set_radius(int radius) { radius_ = radius; }
 
 int Dragon::Get_radius() { return radius_; }
 
-void Dragon::Create_projectile(Point pos, VectorMath vec_move) {
+void Dragon::Create_projectile(Point pos, Point vec_move) {
   parent_scene_->AddObject(std::shared_ptr<GameObject>(new Projectile(
       {pos.X + vec_move.get_int_X(), pos.Y + vec_move.get_int_Y()},
       damage_projectile_, vec_move, speed_projectile_, this->parent_scene_)));
@@ -308,7 +308,8 @@ void Entity::Collide(AidKit& g) {
 }
 
 Monster::Monster(Point pos, char texture, LimitedValue hp, LimitedValue mp,
-                 int damage, Scene* parent_scene, VectorMath cur_vec_move,
+                 int damage, std::shared_ptr<Scene> parent_scene,
+                 Point cur_vec_move,
                  double speed):Entity(pos,texture,hp,mp,damage,parent_scene,cur_vec_move,speed) {}
 
 void Monster::Collide(Projectile& g) { g.Collide(*this); }
@@ -320,17 +321,17 @@ void EntityWithProjoctile::Set_damage_projectile(int damage_projectile) {
   damage_projectile_ = damage_projectile;
 }
 
-int EntityWithProjoctile::Get_damage_projectile() { return damage_projectile_; }
+int EntityWithProjoctile::Get_damage_projectile() const { return damage_projectile_; }
 
 void EntityWithProjoctile::Set_speed_projectile(double speed_projectile) {
   speed_projectile_ = speed_projectile;
 }
 
-double EntityWithProjoctile::Get_speed_projectile() {
+double EntityWithProjoctile::Get_speed_projectile() const {
   return speed_projectile_;
 }
 
-Princess::Princess(Point pos, Scene* parent_scene, char texture)
+Princess::Princess(Point pos, std::shared_ptr<Scene> parent_scene, char texture)
     : Entity(pos, texture, LimitedValue(0), LimitedValue(0),0,parent_scene,{0,0},0) {
 }
 

@@ -59,12 +59,12 @@ void create_aid_kit(DungeonMap& map, const Point& pos) {
                 true);
 }
 void create_Zombie(DungeonMap& map, const Point& pos) {
-  map.AddObject(std::shared_ptr<GameObject>(
-      new Zombie(map.Get_game_config()->Get_zombie(), pos, &map)));
+  map.AddObject(std::shared_ptr<GameObject>(new Zombie(
+      map.Get_game_config()->Get_zombie(), pos, map.Get_scene_shared_ptr())));
 }
 void create_dragon(DungeonMap& map, const Point& pos) {
-  map.AddObject(std::shared_ptr<GameObject>(
-      new Dragon(map.Get_game_config()->Get_dragon(), pos, &map)));
+  map.AddObject(std::shared_ptr<GameObject>(new Dragon(
+      map.Get_game_config()->Get_dragon(), pos, map.Get_scene_shared_ptr())));
 }
 
 void set_spawn_knight(DungeonMap& map, const Point& pos) {
@@ -80,9 +80,10 @@ const std::map<char, void (*)(DungeonMap&, const Point&)> creators_map = {
 
 DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
                        std::shared_ptr<GameConfig> game_config)
-    : kn_(kn), game_config_(game_config) {
+    : kn_(kn), game_config_(game_config), scene_shared_ptr_(this) {
   const double offset_x = 10;
   const double offset_y = 5;
+
   ParseFile(textMap);
   AddObject(std::shared_ptr<GameObject>(
                 new GuiPlayer({width_ + offset_x, offset_y}, this->kn_)),
@@ -91,18 +92,21 @@ DungeonMap::DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
 }
 void DungeonMap::SpawnKnight() {
   kn_->Set_pos(pos_spawn_knight_);
-  kn_->Set_parent_scene(this);
+  kn_->Set_parent_scene(scene_shared_ptr_);
   AddObject(kn_);
 }
 void DungeonMap::SpawnPrincess() {
   pr_ = std::shared_ptr<Princess>(new Princess(Point(-1, -1), nullptr));
   pr_->Set_pos(pos_spawn_princess_);
-  pr_->Set_parent_scene(this);
+  pr_->Set_parent_scene(scene_shared_ptr_);
   AddObject(pr_);
 }
 std::shared_ptr<Knight> DungeonMap::Get_Knight() { return kn_; }
 std::shared_ptr<GameConfig> DungeonMap::Get_game_config() {
   return game_config_;
+}
+std::shared_ptr<Scene> DungeonMap::Get_scene_shared_ptr() {
+  return scene_shared_ptr_;
 }
 void DungeonMap::Set_pos_spawn_knight(Point pos) { pos_spawn_knight_ = pos; }
 Point DungeonMap::Get_pos_sawn_knight() { return pos_spawn_knight_; }

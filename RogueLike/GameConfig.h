@@ -5,11 +5,11 @@ class GameConfig;
 class GameConfig {
  public:
   GameConfig(std::string path);
-  Zombie& Get_zombie();
-  Knight& Get_knight();
-  Wall& Get_wall();
-  AidKit& Get_aid_kit();
-  Dragon& Get_dragon();
+ const Zombie& Get_zombie();
+ const Knight& Get_knight();
+ const Wall& Get_wall();
+ const AidKit& Get_aid_kit();
+ const Dragon& Get_dragon();
   const std::map<GameResult, std::string>& Get_game_result_text_map();
   const std::map<std::string, int>& Get_control_keys();
 

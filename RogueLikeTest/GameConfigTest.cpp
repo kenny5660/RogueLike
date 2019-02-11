@@ -11,12 +11,8 @@ TEST_CLASS(GameConfigTest){
       TEST_METHOD(constructor_and_get_test){
 		  std::shared_ptr<GameConfig> game_config(new GameConfig(TEST_CASE_DIRECTORY +"\\test_game_config.json"));
 		  Zombie ideal_zm;
-		  ideal_zm.get_hp().set_max(7);
-		  ideal_zm.get_hp().set_min(0);
-          ideal_zm.get_hp().set_value(7);
-		  ideal_zm.get_mp().set_max(10);
-          ideal_zm.get_mp().set_min(0);
-          ideal_zm.get_mp().set_value(10);
+          ideal_zm.set_hp(LimitedValue(7, 7,0));
+		  ideal_zm.set_mp(LimitedValue(10, 10,0));
           ideal_zm.Set_damage(2);
           ideal_zm.Set_texture('Z');
           ideal_zm.Set_speed(1);

@@ -47,29 +47,29 @@ TEST_CLASS(LimitedValueUnitTest){
   public :
 
       TEST_METHOD(Constructor_test){
-		VectorMath pt;
+		Point pt;
 		Assert::AreEqual(pt.X, 0.0);
 		Assert::AreEqual(pt.Y, 0.0);
 		}  
 	  TEST_METHOD(Constructor_with_XY_test) {
         double x = 4;
         double y = 5;
-        VectorMath pt(x, y);
+        Point pt(x, y);
 		Assert::AreEqual(pt.X, x,0.1);
 		Assert::AreEqual(pt.Y, y,0.1);
 		}
 	  TEST_METHOD(Constructor_copy_test) {
         double x = 4;
         double y = 5;
-        VectorMath pt(x, y);
-        VectorMath pt2(pt);
+        Point pt(x, y);
+        Point pt2(pt);
 		Assert::AreEqual(pt.X, pt2.X,0.1);
 		Assert::AreEqual(pt.Y, pt2.Y,0.1);
 		}
 	  TEST_METHOD(Geter_int_test) {
         double x = 4;
         double y = 5;
-        VectorMath pt(x, y);
+        Point pt(x, y);
         
 		Assert::AreEqual(pt.get_int_X(), (int)x);
 		Assert::AreEqual(pt.get_int_Y(), (int)y);
@@ -77,8 +77,8 @@ TEST_CLASS(LimitedValueUnitTest){
 	  TEST_METHOD(operator_equal_test) {
         double x = 4;
         double y = 5;
-        VectorMath pt(x, y);
-        VectorMath pt2(pt);
+        Point pt(x, y);
+        Point pt2(pt);
 		Assert::AreEqual(pt == pt2, true);
 		}
 };

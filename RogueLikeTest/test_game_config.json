@@ -1,4 +1,15 @@
 {
+    "win_text": "You safed the wonderful princess!",
+    "lose_text": "You dead!",
+    "not_over_text": "",
+    "control_keys":{
+        "up":259, 
+        "down":258,
+        "right":261,
+        "left":260,
+        "fire":"  ",
+        "exit":"q"
+    },
     "zombie": {
         "hp":{
             "max":7,

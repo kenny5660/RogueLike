@@ -11,17 +11,10 @@ struct Point {
   int get_int_X() const;
   int get_int_Y() const;
   bool operator==(const Point& lhs);
+  bool operator<(const Point& pt) const;
+  Point operator+(const Point& pt);
 };
-struct VectorMath {
-  double X;
-  double Y;
-  VectorMath();
-  VectorMath(double _X, double _Y);
-  VectorMath(const VectorMath& pt);
-  int get_int_X() const;
-  int get_int_Y() const;
-  bool operator==(const VectorMath& lhs);
-};
+
 class LimitedValue {
  public:
   LimitedValue(int value = 0, int max = INT_MAX, int min = INT_MIN);

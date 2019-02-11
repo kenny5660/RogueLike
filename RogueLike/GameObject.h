@@ -57,7 +57,7 @@ class AidKit : public GameObject {
   AidKit(Point pos, int hp_regen, char texture = '+');
   AidKit(const AidKit &aid, Point pos);
   void Set_hp_regen(int hp_regen);
-  int Get_hp_regen();
+  int Get_hp_regen() const;
   void Collide(GameObject &g) override;
 
  private:
@@ -75,19 +75,20 @@ class Entity : public GameObject {
  public:
   Entity();
   Entity(Point pos, char texture, LimitedValue hp, LimitedValue mp, int damage,
-         Scene *parent_scene, VectorMath cur_vec_move, double speed);
-  const LimitedValue &get_hp();
-  const LimitedValue &get_mp();
+         std::shared_ptr<Scene> parent_scene, Point cur_vec_move,
+         double speed);
+  const LimitedValue &get_hp() const;
+  const LimitedValue &get_mp() const;
   void set_hp(const LimitedValue &hp);
   void set_mp(const LimitedValue &mp);
-  int Get_damage();
+  int Get_damage() const;
   void Set_damage(int damage);
-  Scene *Get_parent_scene();
-  void Set_parent_scene(Scene *);
-  double Get_speed();
+  std::shared_ptr<Scene>  Get_parent_scene();
+  void Set_parent_scene(std::shared_ptr<Scene>);
+  double Get_speed() const;
   void Set_speed(double speed);
-  VectorMath Get_cur_vector_move();
-  void Set_cur_vec_move(VectorMath vec);
+  Point Get_cur_vector_move();
+  void Set_cur_vec_move(Point vec);
   virtual void dead();
   void Collide(AidKit &g) override;
   void Update() override;
@@ -96,15 +97,15 @@ class Entity : public GameObject {
   LimitedValue hp_;
   LimitedValue mp_;
   int damage_;
-  Scene *parent_scene_;
-  VectorMath cur_vec_move_ = {1, 0};
+  std::shared_ptr<Scene> parent_scene_;
+  Point cur_vec_move_ = {1, 0};
   double speed_ = 2;
-  void Move(VectorMath vector_move);
+  void Move(Point vector_move);
 };
 class Princess : public Entity {
  public:
   Princess() {}
-  Princess(Point pos, Scene *parent_scene, char texture = 'P');
+  Princess(Point pos, std::shared_ptr<Scene> parent_scene, char texture = 'P');
   void Collide(GameObject &g) override;
   void Collide(Knight &k) override;
 
@@ -113,8 +114,8 @@ class Princess : public Entity {
 class Projectile : public Entity {
  public:
   Projectile() {}
-  Projectile(Point pos, int damage, VectorMath vec_move, double speed,
-             Scene *parent_scene);
+  Projectile(Point pos, int damage, Point vec_move, double speed,
+             std::shared_ptr<Scene> parent_scene);
   void Collide(GameObject &g) override;
   void Collide(Wall &g) override;
   void Collide(Monster &g) override;
@@ -130,7 +131,7 @@ class Projectile : public Entity {
 class ProjectileKnight : public Projectile {
  public:
   ProjectileKnight() {}
-  ProjectileKnight(Point pos, int damage, VectorMath vec_move, double speed,
+  ProjectileKnight(Point pos, int damage, Point vec_move, double speed,
                    Knight *kn);
   void Collide(Monster &g) override;
 
@@ -141,7 +142,8 @@ class Monster : public Entity {
  public:
   Monster() {}
   Monster(Point pos, char texture, LimitedValue hp, LimitedValue mp, int damage,
-          Scene *parent_scene, VectorMath cur_vec_move, double speed);
+          std::shared_ptr<Scene> parent_scene, Point cur_vec_move,
+          double speed);
   void Collide(Projectile &g) override;
 };
 class EntityWithProjoctile {
@@ -149,9 +151,9 @@ class EntityWithProjoctile {
   EntityWithProjoctile(){};
   EntityWithProjoctile(int damage_projectile, double speed_projectile);
   void Set_damage_projectile(int damage_projectile);
-  int Get_damage_projectile();
+  int Get_damage_projectile() const;
   void Set_speed_projectile(double speed_projectile);
-  double Get_speed_projectile();
+  double Get_speed_projectile() const;
 
  protected:
   int damage_projectile_ = 2;
@@ -161,7 +163,7 @@ class EntityWithProjoctile {
 class Dragon : public Monster, public EntityWithProjoctile {
  public:
   Dragon() {}
-  Dragon(const Dragon &dragon, Point pos, Scene *parent_scene);
+  Dragon(const Dragon &dragon, Point pos, std::shared_ptr<Scene> parent_scene);
   void Update() override;
   void Collide(GameObject &g) override;
   void Collide(Monster &m) override;
@@ -169,19 +171,19 @@ class Dragon : public Monster, public EntityWithProjoctile {
   void Collide(Knight &k) override;
   void Set_radius(int radius);
   int Get_radius();
-  void Create_projectile(Point pos, VectorMath vec_move);
+  void Create_projectile(Point pos, Point vec_move);
 
  private:
   int radius_ = 4;
   double radius_counter = 0;
   int cur_moves_i_ = 0;
-  const VectorMath vector_moves[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+  const Point vector_moves[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 };
 
 class Zombie : public Monster {
  public:
   Zombie() {}
-  Zombie(const Zombie &zombie, Point pos, Scene *parent_scene);
+  Zombie(const Zombie &zombie, Point pos, std::shared_ptr<Scene> parent_scene);
   void Collide(GameObject &g) override;
   void Collide(Monster &m) override;
   void Collide(Wall &w) override;
@@ -193,9 +195,9 @@ class Zombie : public Monster {
 class Knight : public Entity, public EntityWithProjoctile {
  public:
   Knight() {}
-  Knight(const Knight &knight, Point pos, Scene *parent_scene,
+  Knight(const Knight &knight, Point pos, std::shared_ptr<Scene> parent_scene,
          std::map<std::string, int> control_keys_);
-  Knight(const Knight &knight, Point pos, Scene *parent_scene);
+  Knight(const Knight &knight, Point pos, std::shared_ptr<Scene> parent_scene);
   void KeyPressed(int key);
   void dead() override;
   void Collide(GameObject &g) override;
