@@ -75,15 +75,14 @@ class Entity : public GameObject {
  public:
   Entity();
   Entity(Point pos, char texture, LimitedValue hp, LimitedValue mp, int damage,
-         std::shared_ptr<Scene> parent_scene, Point cur_vec_move,
-         double speed);
+         std::shared_ptr<Scene> parent_scene, Point cur_vec_move, double speed);
   const LimitedValue &get_hp() const;
   const LimitedValue &get_mp() const;
   void set_hp(const LimitedValue &hp);
   void set_mp(const LimitedValue &mp);
   int Get_damage() const;
   void Set_damage(int damage);
-  std::shared_ptr<Scene>  Get_parent_scene();
+  std::shared_ptr<Scene> Get_parent_scene();
   void Set_parent_scene(std::shared_ptr<Scene>);
   double Get_speed() const;
   void Set_speed(double speed);

@@ -30,10 +30,16 @@ class Scene {
   double elapsed_time_ = 0;
 };
 
-class DungeonMap : public Scene {
+class DungeonMap : public Scene, public std::enable_shared_from_this<Scene> {
  public:
-  DungeonMap(std::istream& textMap, std::shared_ptr<Knight> kn,
-             std::shared_ptr<GameConfig> game_config);
+  static std::shared_ptr<DungeonMap> create(
+      std::istream& textMap, std::shared_ptr<Knight> kn,
+      std::shared_ptr<GameConfig> game_config) {
+    std::shared_ptr<DungeonMap> p(new DungeonMap(kn, game_config));
+    p->init(textMap);
+    return p;
+  }
+
   void SpawnKnight();
   void SpawnPrincess();
   void Set_pos_spawn_knight(Point pos);
@@ -42,11 +48,15 @@ class DungeonMap : public Scene {
   Point Get_pos_sawn_princess();
   std::shared_ptr<Knight> Get_Knight();
   std::shared_ptr<GameConfig> Get_game_config();
-  std::shared_ptr<Scene> Get_scene_shared_ptr();
+  std::shared_ptr<Scene> Get_shared_ptr() { return shared_from_this(); }
+
  private:
+  DungeonMap(std::shared_ptr<Knight> kn,
+             std::shared_ptr<GameConfig> game_config);
+  void init(std::istream& textMap);
   std::shared_ptr<Princess> pr_;
   std::shared_ptr<Knight> kn_;
-  std::shared_ptr<Scene> scene_shared_ptr_;
+  // std::weak_ptr<Scene> scene_shared_ptr_;
   Point pos_spawn_knight_;
   Point pos_spawn_princess_;
   void ParseFile(std::istream& textMap);

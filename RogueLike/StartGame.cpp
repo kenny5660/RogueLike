@@ -20,8 +20,7 @@ void StartGame() {
   std::ifstream input_map("maps/1lvl.dmap");
   std::shared_ptr<GameConfig> game_config = std::make_shared<GameConfig>(std::string("game_config.json"));
   std::shared_ptr<Knight> K_player  = std::make_shared<Knight>(game_config->Get_knight(), Point{-1, -1}, nullptr,game_config->Get_control_keys());
-  std::unique_ptr<DungeonMap> map_1lvl(
-      new DungeonMap(input_map, K_player, game_config));
+  std::shared_ptr<DungeonMap> map_1lvl =DungeonMap::create(input_map, K_player, game_config);
   map_1lvl->SpawnKnight();
   map_1lvl->Draw();
   while (keyDown != game_config->Get_control_keys().at("exit") &&

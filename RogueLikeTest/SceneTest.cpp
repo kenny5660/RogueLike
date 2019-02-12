@@ -75,7 +75,7 @@ TEST_CLASS(DungeonMapTest){
                 std::shared_ptr<GameConfig> game_config(new GameConfig(
                     TEST_CASE_DIRECTORY +"\\test_game_config.json"));
         std::shared_ptr<DungeonMap> sc =
-            std::make_shared<DungeonMap>(inputMap, kn, game_config);
+                    DungeonMap::create(inputMap, kn, game_config);
         sc->Set_elapsed_time(1);
 
         kn->Set_parent_scene(sc);
@@ -96,7 +96,7 @@ TEST_CLASS(DungeonMapTest){
                                      nullptr, game_config->Get_control_keys());
         kn->Set_cur_vec_move({1, 0});
         std::shared_ptr<DungeonMap> sc =
-            std::make_shared<DungeonMap>(inputMap, kn, game_config);
+            DungeonMap::create(inputMap, kn, game_config);
         sc->Set_elapsed_time(1);
         std::shared_ptr<Scene> sc_share(sc);
         kn->Set_parent_scene(sc_share);
@@ -119,7 +119,7 @@ TEST_CLASS(DungeonMapTest){
         kn->Set_cur_vec_move({1, 0});
 
         std::shared_ptr<DungeonMap> sc =
-            std::make_shared<DungeonMap>(inputMap, kn, game_config);
+            DungeonMap::create(inputMap, kn, game_config);
         
         Assert::AreEqual(sc->Get_game_config().get() == game_config.get(),true);
       }
@@ -135,9 +135,10 @@ TEST_CLASS(DungeonMapTest){
                                      nullptr, game_config->Get_control_keys());
         kn->Set_cur_vec_move({1, 0});
         std::shared_ptr<DungeonMap> sc =
-            std::make_shared<DungeonMap>(inputMap, kn, game_config);
+            DungeonMap::create(inputMap, kn, game_config);
         sc->SpawnKnight();
 		Assert::AreEqual(kn.get() == sc->Get_Knight().get(),true);
+        sc.~shared_ptr();
       }
 };
 }
